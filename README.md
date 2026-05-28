@@ -1,0 +1,149 @@
+# Tuk Tracker API (Starter Project)
+
+**Student ID:** YOUR_STUDENT_ID_HERE
+
+**What this is**
+A ready-to-run Node.js + Express starter project implementing a RESTful API for a Real-Time Bus Tracking System (assignment scaffold for NIB304CEM).
+
+**What you get**
+- API endpoints for routes and tuks
+- Basic JWT-based login (admin) for protected endpoints
+- Seed script to load simulation data (5 routes, 25 buses, schedules for next 7 days)
+- Example `simulation-data.json` under `data/`
+- Instructions to run, seed, push to GitHub and deploy
+
+---
+
+## Quick start
+
+1. Copy `.env.example` to `.env` and edit values (MONGODB_URI, JWT_SECRET, ADMIN_USER, ADMIN_PASS).
+2. Install dependencies:
+```bash
+npm install
+```
+
+Repository helper
+-----------------
+There's a helper script to initialize and push this repo to GitHub using the GitHub CLI:
+
+1. Make it executable:
+
+```bash
+chmod +x scripts/create_and_push_repo.sh
+```
+
+2. Run it (defaults are GitHub user `dilsha15720`, repo `tuk-tracker-api`, public):
+
+```bash
+GITHUB_USER=dilsha15720 REPO_NAME=tuk-tracker-api VISIBILITY=public ./scripts/create_and_push_repo.sh
+```
+
+If you don't have the GitHub CLI installed the script will exit with instructions to create the repo manually.
+```
+3. Seed the database (ensure MongoDB is running and `.env` MONGODB_URI is correct):
+```bash
+npm run seed
+```
+4. Run the server:
+```bash
+npm start
+# or for development with auto-restart (requires nodemon)
+npm run dev
+```
+Server default: `http://localhost:5000`
+
+---
+
+## Important .env values (example)
+```
+MONGODB_URI=mongodb://localhost:27017/tuk_tracker
+JWT_SECRET=verysecretkey
+ADMIN_USER=admin
+ADMIN_PASS=admin123
+```
+
+---
+
+## Useful endpoints
+
+- `POST /api/auth/login`  -> body: {"username":"admin","password":"admin123"} -> returns { token }
+- `GET /api/routes` -> public
+- `POST /api/routes` -> protected (admin) - create new route
+- `GET /api/buses` -> public
+- `GET /api/buses/:id` -> get bus details
+- `GET /api/buses/:id/location` -> get current location
+- `POST /api/buses/:id/location` -> protected (admin/operator) - update a bus's location with {"latitude":..., "longitude":...}
+- `POST /api/locations/bulk-update` -> protected - accept array [{"busId", "latitude", "longitude"}, ...]
+
+Use the JWT token in the `Authorization` header: `Authorization: Bearer <token>`
+
+---
+
+## Seeding & Simulation data
+File: `data/simulation-data.json` (generated). Run `npm run seed` to populate MongoDB.
+
+---
+
+## Version control and GitHub (recommended steps)
+
+From project root:
+```bash
+git init
+git add .
+git commit -m "Initial commit - Tuk Tracker API scaffold"
+# create GitHub repo (via web UI) named 'tuk-tracker-api' and then:
+git remote add origin https://github.com/<your-username>/tuk-tracker-api.git
+git branch -M main
+git push -u origin main
+```
+
+**Important for your coursework:**
+- Put your *student ID* in `README.md` (edit it).
+- Add your instructor as a *collaborator* on the GitHub repo (use the GitHub repo settings -> Collaborators).
+
+---
+
+## Deployment (summary)
+You can deploy on Render / Railway / Heroku / Vercel (Node service).
+- Connect the GitHub repo to the hosting provider.
+- Set environment variables (MONGODB_URI, JWT_SECRET, ADMIN_USER, ADMIN_PASS).
+- Build command: `npm install`
+- Start command: `npm start`
+
+---
+
+## Notes for the assignment / report
+- In the report include the API URL, GitHub repo URL, and any AI tools used.
+- Explain design choices (schemas, endpoints, authentication).
+- Mention limitations and next steps (e.g., real-time websockets, map visualization, scaling).
+- Keep plagiarism rules in mind and explain your code during viva.
+
+---
+
+## Appendix (fill this before submission)
+
+1. Deployed API URL (must be publicly accessible, not localhost):
+
+	https://<your-deployment-url>
+
+2. API specification (Swagger):
+
+	- Swagger UI: https://<your-deployment-url>/api-docs
+	- OpenAPI file: docs/openapi.yaml
+
+3. GitHub repositories (public or private with instructor as collaborator):
+
+	- https://github.com/<your-username>/tuk-tracker-api
+
+4. AI aides and generated prompts (if any):
+
+	- Tools used: e.g., ChatGPT, GitHub Copilot
+	- Prompts and outputs: include links or saved prompt/output files if used
+
+5. Any additional notes (limitations, known issues, scaling concerns):
+
+	- 
+
+Good luck! If you want, I can:
+- create the GitHub repo for you (I can show the exact `git` commands to run and a suggested README edit with your student ID),
+- or generate a short deployment checklist for Render/Railway.
