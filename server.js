@@ -3,9 +3,9 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
+import connectDB from './src/config/db.js';
 // Use the cleaned router implementation (fallback) until the corrupted tuk.routes.js is removed
-// Use the safe/clean tuk routes implementation while the original file is repaired
-import tukRoutes from './src/routes/tuk.routes.clean.js';
+import tukRoutes from './src/routes/tuk.routes.js';
 import routeRoutes from './src/routes/route.routes.js';
 import authRoutes from './src/routes/auth.routes.js';
 import locationRoutes from './src/routes/location.routes.js';
@@ -16,6 +16,9 @@ app.use(cors());
 app.use(express.json());
 
 // Do not call connectDB here for tests; call in start script or tests as needed
+if (process.env.NODE_ENV !== 'test') {
+	connectDB();
+}
 
 app.use('/api/auth', authRoutes);
 app.use('/api/tuks', tukRoutes);
