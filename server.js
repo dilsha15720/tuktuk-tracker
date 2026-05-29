@@ -4,7 +4,8 @@ import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import connectDB from './src/config/db.js';
-import tukRoutes from './src/routes/tuk.routes.fixed.js';
+// Use the cleaned router implementation (fallback) until the corrupted tuk.routes.js is removed
+import tukRoutes from './src/routes/tuk.routes.clean.js';
 import routeRoutes from './src/routes/route.routes.js';
 import authRoutes from './src/routes/auth.routes.js';
 import locationRoutes from './src/routes/location.routes.js';
@@ -29,7 +30,11 @@ app.get('/', (req, res) => res.send('Tuk Tracker API'));
 // Swagger UI (skip during tests to avoid parsing errors in CI/test env)
 if (process.env.NODE_ENV !== 'test') {
 	try {
-		const openapiDocument = YAML.load('./docs/openapi.yaml');
+		// Resolve docs path relative to this file so loading works regardless of CWD
+		// (use import.meta.url to compute a stable absolute path)
+		// eslint-disable-next-line no-undef
+		const openapiUrl = new URL('./docs/openapi.yaml', import.meta.url).pathname;
+		const openapiDocument = YAML.load(openapiUrl);
 		app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiDocument));
 	} catch (err) {
 		// log and continue - avoid throwing during app import
