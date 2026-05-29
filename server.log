@@ -1,17 +1,2 @@
-file:///Users/sachinipanditharathna/Downloads/ntc-bus-tracking-api-firebase-main/ntc-tuk-tracking-api/src/routes/tuk.routes.js:14
-import express from 'express';
-^^^^^^^^^^^^^^
-
-SyntaxError: Identifier 'express' has already been declared
-    at compileSourceTextModule (node:internal/modules/esm/utils:354:16)
-    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:91:18)
-    at #translate (node:internal/modules/esm/loader:451:20)
-    at afterLoad (node:internal/modules/esm/loader:507:29)
-    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:512:12)
-    at #getOrCreateModuleJobAfterResolve (node:internal/modules/esm/loader:555:36)
-    at afterResolve (node:internal/modules/esm/loader:603:52)
-    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:609:12)
-    at ModuleJob.syncLink (node:internal/modules/esm/module_job:160:33)
-    at ModuleJob.link (node:internal/modules/esm/module_job:245:17)
-
-Node.js v25.8.1
+(node:7680) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
