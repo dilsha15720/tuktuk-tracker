@@ -5,7 +5,8 @@ import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import connectDB from './src/config/db.js';
 // Use the cleaned router implementation (fallback) until the corrupted tuk.routes.js is removed
-import tukRoutes from './src/routes/tuk.routes.js';
+// Use a safe router implementation to avoid corrupted on-disk files
+import tukRoutes from './src/routes/tuk.routes.safe.js';
 import routeRoutes from './src/routes/route.routes.js';
 import authRoutes from './src/routes/auth.routes.js';
 import locationRoutes from './src/routes/location.routes.js';
