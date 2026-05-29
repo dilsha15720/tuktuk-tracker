@@ -4,7 +4,8 @@ import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 // Use the cleaned router implementation (fallback) until the corrupted tuk.routes.js is removed
-import tukRoutes from './src/routes/tuk.routes.js';
+// Use the safe/clean tuk routes implementation while the original file is repaired
+import tukRoutes from './src/routes/tuk.routes.clean.js';
 import routeRoutes from './src/routes/route.routes.js';
 import authRoutes from './src/routes/auth.routes.js';
 import locationRoutes from './src/routes/location.routes.js';
