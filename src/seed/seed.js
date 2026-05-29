@@ -2,12 +2,22 @@ import dotenv from 'dotenv';
 import connectDB from '../config/db.js';
 import fs from 'fs';
 import Route from '../models/route.model.js';
-import Tuk from '../models/tuk.model.fixed.js';
+import Tuk from '../_clean/tuk.model.js';
 
 dotenv.config();
 
 async function seed() {
-  await connectDB();
+  const uri = process.env.MONGODB_URI || '';
+  if (!uri) {
+    console.warn('MONGODB_URI is not set in .env. The seed will run against an in-memory MongoDB.');
+  } else if (uri.includes('<db_password>')) {
+    console.warn('MONGODB_URI contains placeholder <db_password>. The seed will run against an in-memory MongoDB instead.');
+  }
+
+  const connected = await connectDB();
+  if (!connected) {
+    console.warn('Database connection failed; falling back to in-memory DB if available. Continuing with seed.');
+  }
   const file = new URL('../../data/simulation-data.json', import.meta.url);
   const data = JSON.parse(fs.readFileSync(file));
   console.log('Seeding routes and buses...');

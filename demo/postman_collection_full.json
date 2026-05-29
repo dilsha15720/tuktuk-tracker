@@ -1,0 +1,163 @@
+{
+  "info": {
+    "name": "Tuk Tracker API (Local) - Full",
+    "_postman_id": "tuk-tracker-full-collection",
+    "description": "Auto-generated Postman collection from docs/openapi.yaml. Set variables and import into Postman.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:5000", "type": "string" },
+    { "key": "jwt_token", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Admin Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"username\": \"admin\", \"password\": \"admin123\" }"
+            },
+            "url": { "raw": "{{base_url}}/api/auth/login", "host": ["{{base_url}}"], "path": ["api","auth","login"] }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Save token to collection variable if present",
+                  "const res = pm.response.json();",
+                  "if (res && res.token) {",
+                  "  pm.collectionVariables.set('jwt_token', res.token);",
+                  "  console.log('Saved jwt_token to collection variable');",
+                  "} else {",
+                  "  console.warn('No token in response to save');",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Routes",
+      "item": [
+        {
+          "name": "List Routes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/api/routes", "host": ["{{base_url}}"], "path": ["api","routes"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Route (admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"routeCode\": \"R1\", \"name\": \"Downtown Loop\", \"origin\": \"Station A\", \"destination\": \"Station B\", \"stops\": [\"Stop 1\",\"Stop 2\"], \"distanceKm\": 12.5 }"
+            },
+            "url": { "raw": "{{base_url}}/api/routes", "host": ["{{base_url}}"], "path": ["api","routes"] }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Tuks",
+      "item": [
+        {
+          "name": "List Tuks",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/api/tuks", "host": ["{{base_url}}"], "path": ["api","tuks"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Tuk (admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{ \"busId\": \"BUS001\", \"registration\": \"ABC-123\", \"route\": \"<routeObjectId>\", \"driverName\": \"Driver A\" }" },
+            "url": { "raw": "{{base_url}}/api/tuks", "host": ["{{base_url}}"], "path": ["api","tuks"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Tuk by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/api/tuks/:id", "host": ["{{base_url}}"], "path": ["api","tuks",":id"] }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Tuk Location",
+      "item": [
+        {
+          "name": "Get Tuk Location",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/api/tuks/:id/location", "host": ["{{base_url}}"], "path": ["api","tuks",":id","location"] }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Tuk Location (admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{ \"latitude\": 6.9271, \"longitude\": 79.8612 }" },
+            "url": { "raw": "{{base_url}}/api/tuks/:id/location", "host": ["{{base_url}}"], "path": ["api","tuks",":id","location"] }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Locations",
+      "item": [
+        {
+          "name": "Bulk Update Locations (admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "[ { \"busId\": \"BUS001\", \"latitude\": 6.9271, \"longitude\": 79.8612 }, { \"busId\": \"BUS002\", \"latitude\": 6.93, \"longitude\": 79.855 } ]" },
+            "url": { "raw": "{{base_url}}/api/locations/bulk-update", "host": ["{{base_url}}"], "path": ["api","locations","bulk-update"] }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
