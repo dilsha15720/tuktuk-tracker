@@ -3,21 +3,24 @@ import mongoose from 'mongoose';
 let _inMemoryServer = null;
 
 const connectDB = async () => {
-  // If a real URI is provided and doesn't contain a placeholder, try it first
   const uri = process.env.MONGODB_URI || '';
-  if (uri && !uri.includes('<db_password>')) {
+  const requireMongoDB = process.env.NODE_ENV === 'production' || process.env.REQUIRE_MONGODB === 'true';
+
+  if (!uri || uri.includes('<db_password>')) {
+    if (requireMongoDB) {
+      throw new Error('MONGODB_URI must be configured with a reachable MongoDB deployment.');
+    }
+    console.warn('MONGODB_URI is not configured; using an in-memory database for local development.');
+  } else {
     try {
-      const conn = await mongoose.connect(uri, {});
+      const conn = await mongoose.connect(uri);
       console.log(`MongoDB connected: ${conn.connection.host}`);
       return true;
     } catch (error) {
       console.error('MongoDB connection error:', error.message);
-      console.warn('Failed to connect to configured MongoDB. Will attempt an in-memory MongoDB for demo/testing.');
+      if (requireMongoDB) throw error;
+      console.warn('Using an in-memory database for local development.');
     }
-  } else if (!uri) {
-    console.warn('MONGODB_URI not set — will attempt an in-memory MongoDB for demo/testing.');
-  } else {
-    console.warn('MONGODB_URI contains placeholder or is invalid — will attempt an in-memory MongoDB for demo/testing.');
   }
 
   // Attempt to start an in-memory MongoDB (mongodb-memory-server)
@@ -32,7 +35,8 @@ const connectDB = async () => {
     return true;
   } catch (err) {
     console.error('Failed to start in-memory MongoDB:', err && err.message ? err.message : err);
-    console.warn('Continuing without DB connection (degraded mode).');
+    if (requireMongoDB) throw err;
+    console.warn('Continuing without a database connection.');
     return false;
   }
 };

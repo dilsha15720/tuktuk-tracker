@@ -3,7 +3,6 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
-import connectDB from './src/config/db.js';
 // Use the cleaned router implementation (fallback) until the corrupted tuk.routes.js is removed
 import tukRoutes from './src/routes/tuk.routes.clean.js';
 import routeRoutes from './src/routes/route.routes.js';
@@ -15,17 +14,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Do not call connectDB here for tests; call in start script or tests as needed
-if (process.env.NODE_ENV !== 'test') {
-	connectDB();
-}
-
 app.use('/api/auth', authRoutes);
 app.use('/api/tuks', tukRoutes);
 app.use('/api/routes', routeRoutes);
 app.use('/api/locations', locationRoutes);
 
 app.get('/', (req, res) => res.send('Tuk Tracker API'));
+app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
 // Swagger UI (skip during tests to avoid parsing errors in CI/test env)
 if (process.env.NODE_ENV !== 'test') {
@@ -35,6 +30,7 @@ if (process.env.NODE_ENV !== 'test') {
 		// eslint-disable-next-line no-undef
 		const openapiUrl = new URL('./docs/openapi.yaml', import.meta.url).pathname;
 		const openapiDocument = YAML.load(openapiUrl);
+		openapiDocument.servers = [{ url: process.env.PUBLIC_URL || '/' }];
 		app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiDocument));
 	} catch (err) {
 		// log and continue - avoid throwing during app import

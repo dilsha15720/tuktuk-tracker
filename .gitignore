@@ -3,3 +3,5 @@ node_modules/
 data/*.csv
 .vscode/
 coverage/
+.last_server_pid
+server.log
