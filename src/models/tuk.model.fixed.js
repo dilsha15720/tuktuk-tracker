@@ -10,12 +10,14 @@ const TukSchema = new mongoose.Schema({
     longitude: Number,
     timestamp: Date
   },
-  status: { type: String, enum: ['On Route','Stopped','Delayed'], default: 'On Route' },
-  schedule: [{
-    tripDate: Date,
-    departureTime: String,
-    arrivalTime: String
-  }]
+  status: { type: String, enum: ['On Route', 'Stopped', 'Delayed'], default: 'On Route' },
+  schedule: [
+    {
+      tripDate: Date,
+      departureTime: String,
+      arrivalTime: String
+    }
+  ]
 });
 
 export default mongoose.model('Tuk', TukSchema);

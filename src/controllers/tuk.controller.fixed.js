@@ -1,4 +1,4 @@
-import Tuk from '../models/tuk.model.fixed.js';
+import Tuk from '../models/tuk.model.js';
 
 export const getAllTuks = async (req, res) => {
   try {
@@ -51,3 +51,4 @@ export const updateTukLocation = async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 };
+ 

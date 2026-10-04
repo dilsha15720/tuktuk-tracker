@@ -260,75 +260,75 @@ components:
       required: [routeCode]
 
   Bus:
-      type: object
-      properties:
-        _id:
-          type: string
-        busId:
-          type: string
-        registration:
-          type: string
-        route:
-          $ref: '#/components/schemas/Route'
-        driverName:
-          type: string
-        currentLocation:
-          $ref: '#/components/schemas/Location'
-        status:
-          type: string
-        schedule:
-          type: array
-          items:
-            type: object
-            properties:
-              tripDate:
-                type: string
-                format: date-time
-              departureTime:
-                type: string
-              arrivalTime:
-                type: string
+    type: object
+    properties:
+      _id:
+        type: string
+      busId:
+        type: string
+      registration:
+        type: string
+      route:
+        $ref: '#/components/schemas/Route'
+      driverName:
+        type: string
+      currentLocation:
+        $ref: '#/components/schemas/Location'
+      status:
+        type: string
+      schedule:
+        type: array
+        items:
+          type: object
+          properties:
+            tripDate:
+              type: string
+              format: date-time
+            departureTime:
+              type: string
+            arrivalTime:
+              type: string
 
   TukInput:
-      type: object
-      properties:
-        busId:
-          type: string
-        registration:
-          type: string
-        route:
-          type: string
-        driverName:
-          type: string
-      required: [busId]
+    type: object
+    properties:
+      busId:
+        type: string
+      registration:
+        type: string
+      route:
+        type: string
+      driverName:
+        type: string
+    required: [busId]
 
-    Location:
-      type: object
-      properties:
-        latitude:
-          type: number
-        longitude:
-          type: number
-        timestamp:
-          type: string
-          format: date-time
+  Location:
+    type: object
+    properties:
+      latitude:
+        type: number
+      longitude:
+        type: number
+      timestamp:
+        type: string
+        format: date-time
 
-    LocationUpdate:
-      type: object
-      properties:
-        latitude:
-          type: number
-        longitude:
-          type: number
-      required: [latitude, longitude]
+  LocationUpdate:
+    type: object
+    properties:
+      latitude:
+        type: number
+      longitude:
+        type: number
+    required: [latitude, longitude]
 
   BulkLocationUpdateItem:
-      type: object
-      properties:
-        busId:
-          type: string
-        latitude:
-          type: number
-        longitude:
-          type: number
-      required: [busId, latitude, longitude]
+    type: object
+    properties:
+      busId:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+    required: [busId, latitude, longitude]
