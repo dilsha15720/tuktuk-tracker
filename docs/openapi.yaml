@@ -1,0 +1,334 @@
+openapi: 3.0.0
+info:
+  title: Tuk Tracker API
+  version: 1.0.0
+  description: Full API specification for the Tuk Tracker service (real-time vehicle tracking).
+servers:
+  - url: http://localhost:5000
+paths:
+  /api/auth/login:
+    post:
+      summary: Admin login
+      description: Authenticate admin and receive JWT token to access protected endpoints.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+            examples:
+              admin:
+                value: { "username": "admin", "password": "admin123" }
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        '401':
+          description: Invalid credentials
+  /api/routes:
+    get:
+      summary: List all routes
+      responses:
+        '200':
+          description: Array of route objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Route'
+    post:
+      summary: Create a route (admin)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RouteInput'
+            examples:
+              example:
+                value: { "routeCode": "R1", "name": "Downtown Loop", "origin": "Station A", "destination": "Station B", "stops": ["Stop 1","Stop 2"], "distanceKm": 12.5 }
+      responses:
+        '201':
+          description: Route created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Route'
+        '401':
+          description: Unauthorized
+
+  /api/tuks:
+    get:
+      summary: List buses
+      responses:
+        '200':
+          description: Array of buses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Bus'
+    post:
+      summary: Create a tuk (admin)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BusInput'
+            examples:
+              example:
+                value: { "busId": "BUS001", "registration": "ABC-123", "route": "<routeObjectId>", "driverName": "Driver A" }
+      responses:
+        '201':
+          description: Bus created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bus'
+        '401':
+          description: Unauthorized
+
+  /api/tuks/{id}:
+    get:
+      summary: Get bus by id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Bus resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bus'
+        '404':
+          description: Not found
+
+  /api/tuks/{id}/location:
+    get:
+      summary: Get current location of a tuk
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Current location
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Location'
+    post:
+      summary: Update a tuk's location (admin/operator)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocationUpdate'
+            examples:
+              example:
+                value: { "latitude": 6.9271, "longitude": 79.8612 }
+      responses:
+        '200':
+          description: Location updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+        '401':
+          description: Unauthorized
+
+  /api/locations/bulk-update:
+    post:
+      summary: Bulk update locations (admin)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/BulkLocationUpdateItem'
+            examples:
+              example:
+                value:
+                  - { "busId": "BUS001", "latitude": 6.9271, "longitude": 79.8612 }
+                  - { "busId": "BUS002", "latitude": 6.9300, "longitude": 79.8550 }
+      responses:
+        '200':
+          description: Bulk update results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        busId:
+                          type: string
+                        ok:
+                          type: boolean
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Login:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required: [username, password]
+
+    Route:
+      type: object
+      properties:
+        _id:
+          type: string
+        routeCode:
+          type: string
+        name:
+          type: string
+        origin:
+          type: string
+        destination:
+          type: string
+        stops:
+          type: array
+          items:
+            type: string
+        distanceKm:
+          type: number
+
+    RouteInput:
+      type: object
+      properties:
+        routeCode:
+          type: string
+        name:
+          type: string
+        origin:
+          type: string
+        destination:
+          type: string
+        stops:
+          type: array
+          items:
+            type: string
+        distanceKm:
+          type: number
+      required: [routeCode]
+
+  Bus:
+      type: object
+      properties:
+        _id:
+          type: string
+        busId:
+          type: string
+        registration:
+          type: string
+        route:
+          $ref: '#/components/schemas/Route'
+        driverName:
+          type: string
+        currentLocation:
+          $ref: '#/components/schemas/Location'
+        status:
+          type: string
+        schedule:
+          type: array
+          items:
+            type: object
+            properties:
+              tripDate:
+                type: string
+                format: date-time
+              departureTime:
+                type: string
+              arrivalTime:
+                type: string
+
+  TukInput:
+      type: object
+      properties:
+        busId:
+          type: string
+        registration:
+          type: string
+        route:
+          type: string
+        driverName:
+          type: string
+      required: [busId]
+
+    Location:
+      type: object
+      properties:
+        latitude:
+          type: number
+        longitude:
+          type: number
+        timestamp:
+          type: string
+          format: date-time
+
+    LocationUpdate:
+      type: object
+      properties:
+        latitude:
+          type: number
+        longitude:
+          type: number
+      required: [latitude, longitude]
+
+  BulkLocationUpdateItem:
+      type: object
+      properties:
+        busId:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+      required: [busId, latitude, longitude]

@@ -1,0 +1,1286 @@
+{
+  "routes": [
+    {
+      "routeCode": "R1",
+      "name": "Colombo - Kandy",
+      "origin": "Colombo",
+      "destination": "Kandy",
+      "stops": [
+        "Kiribathgoda",
+        "Gampola"
+      ],
+      "distanceKm": 115
+    },
+    {
+      "routeCode": "R2",
+      "name": "Colombo - Jaffna",
+      "origin": "Colombo",
+      "destination": "Jaffna",
+      "stops": [
+        "Anuradhapura",
+        "Vavuniya"
+      ],
+      "distanceKm": 396
+    },
+    {
+      "routeCode": "R3",
+      "name": "Colombo - Matara",
+      "origin": "Colombo",
+      "destination": "Matara",
+      "stops": [
+        "Galle",
+        "Bentota"
+      ],
+      "distanceKm": 160
+    },
+    {
+      "routeCode": "R4",
+      "name": "Kandy - Nuwara Eliya",
+      "origin": "Kandy",
+      "destination": "Nuwara Eliya",
+      "stops": [
+        "Kadugannawa",
+        "Hatton"
+      ],
+      "distanceKm": 75
+    },
+    {
+      "routeCode": "R5",
+      "name": "Galle - Anuradhapura",
+      "origin": "Galle",
+      "destination": "Anuradhapura",
+      "stops": [
+        "Matara",
+        "Hambantota"
+      ],
+      "distanceKm": 260
+    }
+  ],
+  "buses": [
+    {
+      "busId": "B001",
+      "registration": "WP-6113",
+      "routeCode": "R1",
+      "driverName": "Driver 1",
+      "currentLocation": {
+        "latitude": 6.950649,
+        "longitude": 79.197678,
+        "timestamp": "2025-10-09T04:24:25.889130"
+      },
+      "status": "Stopped",
+      "schedule": [
+        {
+          "tripDate": "2025-10-09",
+          "departureTime": "9:00",
+          "arrivalTime": "13:30"
+        },
+        {
+          "tripDate": "2025-10-10",
+          "departureTime": "9:00",
+          "arrivalTime": "13:30"
+        },
+        {
+          "tripDate": "2025-10-11",
+          "departureTime": "9:00",
+          "arrivalTime": "13:30"
+        },
+        {
+          "tripDate": "2025-10-12",
+          "departureTime": "9:00",
+          "arrivalTime": "13:30"
+        },
+        {
+          "tripDate": "2025-10-13",
+          "departureTime": "9:00",
+          "arrivalTime": "13:30"
+        },
+        {
+          "tripDate": "2025-10-14",
+          "departureTime": "9:00",
+          "arrivalTime": "13:30"
+        },
+        {
+          "tripDate": "2025-10-15",
+          "departureTime": "9:00",
+          "arrivalTime": "13:30"
+        }
+      ]
+    },
+    {
+      "busId": "B002",
+      "registration": "WP-9698",
+      "routeCode": "R4",
+      "driverName": "Driver 2",
+      "currentLocation": {
+        "latitude": 7.003933,
+        "longitude": 79.666253,
+        "timestamp": "2025-10-09T04:24:25.889194"
+      },
+      "status": "Stopped",
+      "schedule": [
+        {
+          "tripDate": "2025-10-09",
+          "departureTime": "10:00",
+          "arrivalTime": "14:30"
+        },
+        {
+          "tripDate": "2025-10-10",
+          "departureTime": "10:00",
+          "arrivalTime": "14:30"
+        },
+        {
+          "tripDate": "2025-10-11",
+          "departureTime": "10:00",
+          "arrivalTime": "14:30"
+        },
+        {
+          "tripDate": "2025-10-12",
+          "departureTime": "10:00",
+          "arrivalTime": "14:30"
+        },
+        {
+          "tripDate": "2025-10-13",
+          "departureTime": "10:00",
+          "arrivalTime": "14:30"
+        },
+        {
+          "tripDate": "2025-10-14",
+          "departureTime": "10:00",
+          "arrivalTime": "14:30"
+        },
+        {
+          "tripDate": "2025-10-15",
+          "departureTime": "10:00",
+          "arrivalTime": "14:30"
+        }
+      ]
+    },
+    {
+      "busId": "B003",
+      "registration": "WP-2390",
+      "routeCode": "R5",
+      "driverName": "Driver 3",
+      "currentLocation": {
+        "latitude": 6.753007,
+        "longitude": 79.263713,
+        "timestamp": "2025-10-09T04:24:25.889256"
+      },
+      "status": "Stopped",
+      "schedule": [
+        {
+          "tripDate": "2025-10-09",
+          "departureTime": "11:00",
+          "arrivalTime": "15:30"
+        },
+        {
+          "tripDate": "2025-10-10",
+          "departureTime": "11:00",
+          "arrivalTime": "15:30"
+        },
+        {
+          "tripDate": "2025-10-11",
+          "departureTime": "11:00",
+          "arrivalTime": "15:30"
+        },
+        {
+          "tripDate": "2025-10-12",
+          "departureTime": "11:00",
+          "arrivalTime": "15:30"
+        },
+        {
+          "tripDate": "2025-10-13",
+          "departureTime": "11:00",
+          "arrivalTime": "15:30"
+        },
+        {
+          "tripDate": "2025-10-14",
+          "departureTime": "11:00",
+          "arrivalTime": "15:30"
+        },
+        {
+          "tripDate": "2025-10-15",
+          "departureTime": "11:00",
+          "arrivalTime": "15:30"
+        }
+      ]
+    },
+    {
+      "busId": "B004",
+      "registration": "WP-3209",
+      "routeCode": "R2",
+      "driverName": "Driver 4",
+      "currentLocation": {
+        "latitude": 7.163509,
+        "longitude": 80.129126,
+        "timestamp": "2025-10-09T04:24:25.889299"
+      },
+      "status": "Delayed",
+      "schedule": [
+        {
+          "tripDate": "2025-10-09",
+          "departureTime": "12:00",
+          "arrivalTime": "16:30"
+        },
+        {
+          "tripDate": "2025-10-10",
+          "departureTime": "12:00",
+          "arrivalTime": "16:30"
+        },
+        {
+          "tripDate": "2025-10-11",
+          "departureTime": "12:00",
+          "arrivalTime": "16:30"
+        },
+        {
+          "tripDate": "2025-10-12",
+          "departureTime": "12:00",
+          "arrivalTime": "16:30"
+        },
+        {
+          "tripDate": "2025-10-13",
+          "departureTime": "12:00",
+          "arrivalTime": "16:30"
+        },
+        {
+          "tripDate": "2025-10-14",
+          "departureTime": "12:00",
+          "arrivalTime": "16:30"
+        },
+        {
+          "tripDate": "2025-10-15",
+          "departureTime": "12:00",
+          "arrivalTime": "16:30"
+        }
+      ]
+    },
+    {
+      "busId": "B005",
+      "registration": "WP-8669",
+      "routeCode": "R3",
+      "driverName": "Driver 5",
+      "currentLocation": {
+        "latitude": 6.789437,
+        "longitude": 79.46044,
+        "timestamp": "2025-10-09T04:24:25.889343"
+      },
+      "status": "On Route",
+      "schedule": [
+        {
+          "tripDate": "2025-10-09",
+          "departureTime": "8:00",
+          "arrivalTime": "12:30"
+        },
+        {
+          "tripDate": "2025-10-10",
+          "departureTime": "8:00",
+          "arrivalTime": "12:30"
+        },
+        {
+          "tripDate": "2025-10-11",
+          "departureTime": "8:00",
+          "arrivalTime": "12:30"
+        },
+        {
+          "tripDate": "2025-10-12",
+          "departureTime": "8:00",
+          "arrivalTime": "12:30"
+        },
+        {
+          "tripDate": "2025-10-13",
+          "departureTime": "8:00",
+          "arrivalTime": "12:30"
+        },
+        {
+          "tripDate": "2025-10-14",
+          "departureTime": "8:00",
+          "arrivalTime": "12:30"
+        },
+        {
+          "tripDate": "2025-10-15",
+          "departureTime": "8:00",
+          "arrivalTime": "12:30"
+        }
+      ]
+    },
+    {
+      "busId": "B006",
+      "registration": "WP-1776",
+      "routeCode": "R3",
+      "driverName": "Driver 6",
+      "currentLocation": {
+        "latitude": 7.124232,
+        "longitude": 80.022875,
+        "timestamp": "2025-10-09T04:24:25.889388"
+      },
+      "status": "Stopped",
+      "schedule": [
+        {
+          "tripDate": "2025-10-09",
+          "departureTime": "9:00",
+          "arrivalTime": "13:30"
+        },
+        {
+          "tripDate": "2025-10-10",
+          "departureTime": "9:00",
+          "arrivalTime": "13:30"
+        },
+        {
+          "tripDate": "2025-10-11",
+          "departureTime": "9:00",
+          "arrivalTime": "13:30"
+        },
+        {
+          "tripDate": "2025-10-12",
+          "departureTime": "9:00",
+          "arrivalTime": "13:30"
+        },
+        {
+          "tripDate": "2025-10-13",
+          "departureTime": "9:00",
+          "arrivalTime": "13:30"
+        },
+        {
+          "tripDate": "2025-10-14",
+          "departureTime": "9:00",
+          "arrivalTime": "13:30"
+        },
+        {
+          "tripDate": "2025-10-15",
+          "departureTime": "9:00",
+          "arrivalTime": "13:30"
+        }
+      ]
+    },
+    {
+      "busId": "B007",
+      "registration": "WP-6419",
+      "routeCode": "R5",
+      "driverName": "Driver 7",
+      "currentLocation": {
+        "latitude": 6.56235,
+        "longitude": 79.928061,
+        "timestamp": "2025-10-09T04:24:25.889430"
+      },
+      "status": "On Route",
+      "schedule": [
+        {
+          "tripDate": "2025-10-09",
+          "departureTime": "10:00",
+          "arrivalTime": "14:30"
+        },
+        {
+          "tripDate": "2025-10-10",
+          "departureTime": "10:00",
+          "arrivalTime": "14:30"
+        },
+        {
+          "tripDate": "2025-10-11",
+          "departureTime": "10:00",
+          "arrivalTime": "14:30"
+        },
+        {
+          "tripDate": "2025-10-12",
+          "departureTime": "10:00",
+          "arrivalTime": "14:30"
+        },
+        {
+          "tripDate": "2025-10-13",
+          "departureTime": "10:00",
+          "arrivalTime": "14:30"
+        },
+        {
+          "tripDate": "2025-10-14",
+          "departureTime": "10:00",
+          "arrivalTime": "14:30"
+        },
+        {
+          "tripDate": "2025-10-15",
+          "departureTime": "10:00",
+          "arrivalTime": "14:30"
+        }
+      ]
+    },
+    {
+      "busId": "B008",
+      "registration": "WP-7878",
+      "routeCode": "R1",
+      "driverName": "Driver 8",
+      "currentLocation": {
+        "latitude": 7.210407,
+        "longitude": 79.794129,
+        "timestamp": "2025-10-09T04:24:25.889454"
+      },
+      "status": "Stopped",
+      "schedule": [
+        {
+          "tripDate": "2025-10-09",
+          "departureTime": "11:00",
+          "arrivalTime": "15:30"
+        },
+        {
+          "tripDate": "2025-10-10",
+          "departureTime": "11:00",
+          "arrivalTime": "15:30"
+        },
+        {
+          "tripDate": "2025-10-11",
+          "departureTime": "11:00",
+          "arrivalTime": "15:30"
+        },
+        {
+          "tripDate": "2025-10-12",
+          "departureTime": "11:00",
+          "arrivalTime": "15:30"
+        },
+        {
+          "tripDate": "2025-10-13",
+          "departureTime": "11:00",
+          "arrivalTime": "15:30"
+        },
+        {
+          "tripDate": "2025-10-14",
+          "departureTime": "11:00",
+          "arrivalTime": "15:30"
+        },
+        {
+          "tripDate": "2025-10-15",
+          "departureTime": "11:00",
+          "arrivalTime": "15:30"
+        }
+      ]
+    },
+    {
+      "busId": "B009",
+      "registration": "WP-4827",
+      "routeCode": "R2",
+      "driverName": "Driver 9",
+      "currentLocation": {
+        "latitude": 7.146103,
+        "longitude": 79.390831,
+        "timestamp": "2025-10-09T04:24:25.889475"
+      },
+      "status": "Delayed",
+      "schedule": [
+        {
+          "tripDate": "2025-10-09",
+          "departureTime": "12:00",
+          "arrivalTime": "16:30"
+        },
+        {
+          "tripDate": "2025-10-10",
+          "departureTime": "12:00",
+          "arrivalTime": "16:30"
+        },
+        {
+          "tripDate": "2025-10-11",
+          "departureTime": "12:00",
+          "arrivalTime": "16:30"
+        },
+        {
+          "tripDate": "2025-10-12",
+          "departureTime": "12:00",
+          "arrivalTime": "16:30"
+        },
+        {
+          "tripDate": "2025-10-13",
+          "departureTime": "12:00",
+          "arrivalTime": "16:30"
+        },
+        {
+          "tripDate": "2025-10-14",
+          "departureTime": "12:00",
+          "arrivalTime": "16:30"
+        },
+        {
+          "tripDate": "2025-10-15",
+          "departureTime": "12:00",
+          "arrivalTime": "16:30"
+        }
+      ]
+    },
+    {
+      "busId": "B010",
+      "registration": "WP-9129",
+      "routeCode": "R3",
+      "driverName": "Driver 10",
+      "currentLocation": {
+        "latitude": 6.527563,
+        "longitude": 80.430647,
+        "timestamp": "2025-10-09T04:24:25.889498"
+      },
+      "status": "On Route",
+      "schedule": [
+        {
+          "tripDate": "2025-10-09",
+          "departureTime": "8:00",
+          "arrivalTime": "12:30"
+        },
+        {
+          "tripDate": "2025-10-10",
+          "departureTime": "8:00",
+          "arrivalTime": "12:30"
+        },
+        {
+          "tripDate": "2025-10-11",
+          "departureTime": "8:00",
+          "arrivalTime": "12:30"
+        },
+        {
+          "tripDate": "2025-10-12",
+          "departureTime": "8:00",
+          "arrivalTime": "12:30"
+        },
+        {
+          "tripDate": "2025-10-13",
+          "departureTime": "8:00",
+          "arrivalTime": "12:30"
+        },
+        {
+          "tripDate": "2025-10-14",
+          "departureTime": "8:00",
+          "arrivalTime": "12:30"
+        },
+        {
+          "tripDate": "2025-10-15",
+          "departureTime": "8:00",
+          "arrivalTime": "12:30"
+        }
+      ]
+    },
+    {
+      "busId": "B011",
+      "registration": "WP-2956",
+      "routeCode": "R1",
+      "driverName": "Driver 11",
+      "currentLocation": {
+        "latitude": 7.29864,
+        "longitude": 79.296986,
+        "timestamp": "2025-10-09T04:24:25.889521"
+      },
+      "status": "On Route",
+      "schedule": [
+        {
+          "tripDate": "2025-10-09",
+          "departureTime": "9:00",
+          "arrivalTime": "13:30"
+        },
+        {
+          "tripDate": "2025-10-10",
+          "departureTime": "9:00",
+          "arrivalTime": "13:30"
+        },
+        {
+          "tripDate": "2025-10-11",
+          "departureTime": "9:00",
+          "arrivalTime": "13:30"
+        },
+        {
+          "tripDate": "2025-10-12",
+          "departureTime": "9:00",
+          "arrivalTime": "13:30"
+        },
+        {
+          "tripDate": "2025-10-13",
+          "departureTime": "9:00",
+          "arrivalTime": "13:30"
+        },
+        {
+          "tripDate": "2025-10-14",
+          "departureTime": "9:00",
+          "arrivalTime": "13:30"
+        },
+        {
+          "tripDate": "2025-10-15",
+          "departureTime": "9:00",
+          "arrivalTime": "13:30"
+        }
+      ]
+    },
+    {
+      "busId": "B012",
+      "registration": "WP-5501",
+      "routeCode": "R1",
+      "driverName": "Driver 12",
+      "currentLocation": {
+        "latitude": 6.909546,
+        "longitude": 79.146141,
+        "timestamp": "2025-10-09T04:24:25.889544"
+      },
+      "status": "Stopped",
+      "schedule": [
+        {
+          "tripDate": "2025-10-09",
+          "departureTime": "10:00",
+          "arrivalTime": "14:30"
+        },
+        {
+          "tripDate": "2025-10-10",
+          "departureTime": "10:00",
+          "arrivalTime": "14:30"
+        },
+        {
+          "tripDate": "2025-10-11",
+          "departureTime": "10:00",
+          "arrivalTime": "14:30"
+        },
+        {
+          "tripDate": "2025-10-12",
+          "departureTime": "10:00",
+          "arrivalTime": "14:30"
+        },
+        {
+          "tripDate": "2025-10-13",
+          "departureTime": "10:00",
+          "arrivalTime": "14:30"
+        },
+        {
+          "tripDate": "2025-10-14",
+          "departureTime": "10:00",
+          "arrivalTime": "14:30"
+        },
+        {
+          "tripDate": "2025-10-15",
+          "departureTime": "10:00",
+          "arrivalTime": "14:30"
+        }
+      ]
+    },
+    {
+      "busId": "B013",
+      "registration": "WP-2932",
+      "routeCode": "R3",
+      "driverName": "Driver 13",
+      "currentLocation": {
+        "latitude": 6.544504,
+        "longitude": 79.544222,
+        "timestamp": "2025-10-09T04:24:25.889582"
+      },
+      "status": "On Route",
+      "schedule": [
+        {
+          "tripDate": "2025-10-09",
+          "departureTime": "11:00",
+          "arrivalTime": "15:30"
+        },
+        {
+          "tripDate": "2025-10-10",
+          "departureTime": "11:00",
+          "arrivalTime": "15:30"
+        },
+        {
+          "tripDate": "2025-10-11",
+          "departureTime": "11:00",
+          "arrivalTime": "15:30"
+        },
+        {
+          "tripDate": "2025-10-12",
+          "departureTime": "11:00",
+          "arrivalTime": "15:30"
+        },
+        {
+          "tripDate": "2025-10-13",
+          "departureTime": "11:00",
+          "arrivalTime": "15:30"
+        },
+        {
+          "tripDate": "2025-10-14",
+          "departureTime": "11:00",
+          "arrivalTime": "15:30"
+        },
+        {
+          "tripDate": "2025-10-15",
+          "departureTime": "11:00",
+          "arrivalTime": "15:30"
+        }
+      ]
+    },
+    {
+      "busId": "B014",
+      "registration": "WP-2290",
+      "routeCode": "R4",
+      "driverName": "Driver 14",
+      "currentLocation": {
+        "latitude": 6.921711,
+        "longitude": 80.044143,
+        "timestamp": "2025-10-09T04:24:25.889615"
+      },
+      "status": "On Route",
+      "schedule": [
+        {
+          "tripDate": "2025-10-09",
+          "departureTime": "12:00",
+          "arrivalTime": "16:30"
+        },
+        {
+          "tripDate": "2025-10-10",
+          "departureTime": "12:00",
+          "arrivalTime": "16:30"
+        },
+        {
+          "tripDate": "2025-10-11",
+          "departureTime": "12:00",
+          "arrivalTime": "16:30"
+        },
+        {
+          "tripDate": "2025-10-12",
+          "departureTime": "12:00",
+          "arrivalTime": "16:30"
+        },
+        {
+          "tripDate": "2025-10-13",
+          "departureTime": "12:00",
+          "arrivalTime": "16:30"
+        },
+        {
+          "tripDate": "2025-10-14",
+          "departureTime": "12:00",
+          "arrivalTime": "16:30"
+        },
+        {
+          "tripDate": "2025-10-15",
+          "departureTime": "12:00",
+          "arrivalTime": "16:30"
+        }
+      ]
+    },
+    {
+      "busId": "B015",
+      "registration": "WP-4048",
+      "routeCode": "R5",
+      "driverName": "Driver 15",
+      "currentLocation": {
+        "latitude": 7.054599,
+        "longitude": 79.061231,
+        "timestamp": "2025-10-09T04:24:25.889658"
+      },
+      "status": "Delayed",
+      "schedule": [
+        {
+          "tripDate": "2025-10-09",
+          "departureTime": "8:00",
+          "arrivalTime": "12:30"
+        },
+        {
+          "tripDate": "2025-10-10",
+          "departureTime": "8:00",
+          "arrivalTime": "12:30"
+        },
+        {
+          "tripDate": "2025-10-11",
+          "departureTime": "8:00",
+          "arrivalTime": "12:30"
+        },
+        {
+          "tripDate": "2025-10-12",
+          "departureTime": "8:00",
+          "arrivalTime": "12:30"
+        },
+        {
+          "tripDate": "2025-10-13",
+          "departureTime": "8:00",
+          "arrivalTime": "12:30"
+        },
+        {
+          "tripDate": "2025-10-14",
+          "departureTime": "8:00",
+          "arrivalTime": "12:30"
+        },
+        {
+          "tripDate": "2025-10-15",
+          "departureTime": "8:00",
+          "arrivalTime": "12:30"
+        }
+      ]
+    },
+    {
+      "busId": "B016",
+      "registration": "WP-6057",
+      "routeCode": "R3",
+      "driverName": "Driver 16",
+      "currentLocation": {
+        "latitude": 7.089227,
+        "longitude": 79.492875,
+        "timestamp": "2025-10-09T04:24:25.889680"
+      },
+      "status": "Stopped",
+      "schedule": [
+        {
+          "tripDate": "2025-10-09",
+          "departureTime": "9:00",
+          "arrivalTime": "13:30"
+        },
+        {
+          "tripDate": "2025-10-10",
+          "departureTime": "9:00",
+          "arrivalTime": "13:30"
+        },
+        {
+          "tripDate": "2025-10-11",
+          "departureTime": "9:00",
+          "arrivalTime": "13:30"
+        },
+        {
+          "tripDate": "2025-10-12",
+          "departureTime": "9:00",
+          "arrivalTime": "13:30"
+        },
+        {
+          "tripDate": "2025-10-13",
+          "departureTime": "9:00",
+          "arrivalTime": "13:30"
+        },
+        {
+          "tripDate": "2025-10-14",
+          "departureTime": "9:00",
+          "arrivalTime": "13:30"
+        },
+        {
+          "tripDate": "2025-10-15",
+          "departureTime": "9:00",
+          "arrivalTime": "13:30"
+        }
+      ]
+    },
+    {
+      "busId": "B017",
+      "registration": "WP-6109",
+      "routeCode": "R5",
+      "driverName": "Driver 17",
+      "currentLocation": {
+        "latitude": 7.206635,
+        "longitude": 80.182485,
+        "timestamp": "2025-10-09T04:24:25.889702"
+      },
+      "status": "On Route",
+      "schedule": [
+        {
+          "tripDate": "2025-10-09",
+          "departureTime": "10:00",
+          "arrivalTime": "14:30"
+        },
+        {
+          "tripDate": "2025-10-10",
+          "departureTime": "10:00",
+          "arrivalTime": "14:30"
+        },
+        {
+          "tripDate": "2025-10-11",
+          "departureTime": "10:00",
+          "arrivalTime": "14:30"
+        },
+        {
+          "tripDate": "2025-10-12",
+          "departureTime": "10:00",
+          "arrivalTime": "14:30"
+        },
+        {
+          "tripDate": "2025-10-13",
+          "departureTime": "10:00",
+          "arrivalTime": "14:30"
+        },
+        {
+          "tripDate": "2025-10-14",
+          "departureTime": "10:00",
+          "arrivalTime": "14:30"
+        },
+        {
+          "tripDate": "2025-10-15",
+          "departureTime": "10:00",
+          "arrivalTime": "14:30"
+        }
+      ]
+    },
+    {
+      "busId": "B018",
+      "registration": "WP-2467",
+      "routeCode": "R2",
+      "driverName": "Driver 18",
+      "currentLocation": {
+        "latitude": 6.706948,
+        "longitude": 79.715961,
+        "timestamp": "2025-10-09T04:24:25.889724"
+      },
+      "status": "On Route",
+      "schedule": [
+        {
+          "tripDate": "2025-10-09",
+          "departureTime": "11:00",
+          "arrivalTime": "15:30"
+        },
+        {
+          "tripDate": "2025-10-10",
+          "departureTime": "11:00",
+          "arrivalTime": "15:30"
+        },
+        {
+          "tripDate": "2025-10-11",
+          "departureTime": "11:00",
+          "arrivalTime": "15:30"
+        },
+        {
+          "tripDate": "2025-10-12",
+          "departureTime": "11:00",
+          "arrivalTime": "15:30"
+        },
+        {
+          "tripDate": "2025-10-13",
+          "departureTime": "11:00",
+          "arrivalTime": "15:30"
+        },
+        {
+          "tripDate": "2025-10-14",
+          "departureTime": "11:00",
+          "arrivalTime": "15:30"
+        },
+        {
+          "tripDate": "2025-10-15",
+          "departureTime": "11:00",
+          "arrivalTime": "15:30"
+        }
+      ]
+    },
+    {
+      "busId": "B019",
+      "registration": "WP-9141",
+      "routeCode": "R3",
+      "driverName": "Driver 19",
+      "currentLocation": {
+        "latitude": 6.662378,
+        "longitude": 79.107405,
+        "timestamp": "2025-10-09T04:24:25.889747"
+      },
+      "status": "Stopped",
+      "schedule": [
+        {
+          "tripDate": "2025-10-09",
+          "departureTime": "12:00",
+          "arrivalTime": "16:30"
+        },
+        {
+          "tripDate": "2025-10-10",
+          "departureTime": "12:00",
+          "arrivalTime": "16:30"
+        },
+        {
+          "tripDate": "2025-10-11",
+          "departureTime": "12:00",
+          "arrivalTime": "16:30"
+        },
+        {
+          "tripDate": "2025-10-12",
+          "departureTime": "12:00",
+          "arrivalTime": "16:30"
+        },
+        {
+          "tripDate": "2025-10-13",
+          "departureTime": "12:00",
+          "arrivalTime": "16:30"
+        },
+        {
+          "tripDate": "2025-10-14",
+          "departureTime": "12:00",
+          "arrivalTime": "16:30"
+        },
+        {
+          "tripDate": "2025-10-15",
+          "departureTime": "12:00",
+          "arrivalTime": "16:30"
+        }
+      ]
+    },
+    {
+      "busId": "B020",
+      "registration": "WP-4220",
+      "routeCode": "R1",
+      "driverName": "Driver 20",
+      "currentLocation": {
+        "latitude": 6.780795,
+        "longitude": 79.888232,
+        "timestamp": "2025-10-09T04:24:25.889770"
+      },
+      "status": "Delayed",
+      "schedule": [
+        {
+          "tripDate": "2025-10-09",
+          "departureTime": "8:00",
+          "arrivalTime": "12:30"
+        },
+        {
+          "tripDate": "2025-10-10",
+          "departureTime": "8:00",
+          "arrivalTime": "12:30"
+        },
+        {
+          "tripDate": "2025-10-11",
+          "departureTime": "8:00",
+          "arrivalTime": "12:30"
+        },
+        {
+          "tripDate": "2025-10-12",
+          "departureTime": "8:00",
+          "arrivalTime": "12:30"
+        },
+        {
+          "tripDate": "2025-10-13",
+          "departureTime": "8:00",
+          "arrivalTime": "12:30"
+        },
+        {
+          "tripDate": "2025-10-14",
+          "departureTime": "8:00",
+          "arrivalTime": "12:30"
+        },
+        {
+          "tripDate": "2025-10-15",
+          "departureTime": "8:00",
+          "arrivalTime": "12:30"
+        }
+      ]
+    },
+    {
+      "busId": "B021",
+      "registration": "WP-7580",
+      "routeCode": "R2",
+      "driverName": "Driver 21",
+      "currentLocation": {
+        "latitude": 7.013928,
+        "longitude": 79.363035,
+        "timestamp": "2025-10-09T04:24:25.889793"
+      },
+      "status": "On Route",
+      "schedule": [
+        {
+          "tripDate": "2025-10-09",
+          "departureTime": "9:00",
+          "arrivalTime": "13:30"
+        },
+        {
+          "tripDate": "2025-10-10",
+          "departureTime": "9:00",
+          "arrivalTime": "13:30"
+        },
+        {
+          "tripDate": "2025-10-11",
+          "departureTime": "9:00",
+          "arrivalTime": "13:30"
+        },
+        {
+          "tripDate": "2025-10-12",
+          "departureTime": "9:00",
+          "arrivalTime": "13:30"
+        },
+        {
+          "tripDate": "2025-10-13",
+          "departureTime": "9:00",
+          "arrivalTime": "13:30"
+        },
+        {
+          "tripDate": "2025-10-14",
+          "departureTime": "9:00",
+          "arrivalTime": "13:30"
+        },
+        {
+          "tripDate": "2025-10-15",
+          "departureTime": "9:00",
+          "arrivalTime": "13:30"
+        }
+      ]
+    },
+    {
+      "busId": "B022",
+      "registration": "WP-8997",
+      "routeCode": "R4",
+      "driverName": "Driver 22",
+      "currentLocation": {
+        "latitude": 6.903002,
+        "longitude": 79.943886,
+        "timestamp": "2025-10-09T04:24:25.889815"
+      },
+      "status": "Delayed",
+      "schedule": [
+        {
+          "tripDate": "2025-10-09",
+          "departureTime": "10:00",
+          "arrivalTime": "14:30"
+        },
+        {
+          "tripDate": "2025-10-10",
+          "departureTime": "10:00",
+          "arrivalTime": "14:30"
+        },
+        {
+          "tripDate": "2025-10-11",
+          "departureTime": "10:00",
+          "arrivalTime": "14:30"
+        },
+        {
+          "tripDate": "2025-10-12",
+          "departureTime": "10:00",
+          "arrivalTime": "14:30"
+        },
+        {
+          "tripDate": "2025-10-13",
+          "departureTime": "10:00",
+          "arrivalTime": "14:30"
+        },
+        {
+          "tripDate": "2025-10-14",
+          "departureTime": "10:00",
+          "arrivalTime": "14:30"
+        },
+        {
+          "tripDate": "2025-10-15",
+          "departureTime": "10:00",
+          "arrivalTime": "14:30"
+        }
+      ]
+    },
+    {
+      "busId": "B023",
+      "registration": "WP-9861",
+      "routeCode": "R1",
+      "driverName": "Driver 23",
+      "currentLocation": {
+        "latitude": 6.725813,
+        "longitude": 80.21321,
+        "timestamp": "2025-10-09T04:24:25.889838"
+      },
+      "status": "Stopped",
+      "schedule": [
+        {
+          "tripDate": "2025-10-09",
+          "departureTime": "11:00",
+          "arrivalTime": "15:30"
+        },
+        {
+          "tripDate": "2025-10-10",
+          "departureTime": "11:00",
+          "arrivalTime": "15:30"
+        },
+        {
+          "tripDate": "2025-10-11",
+          "departureTime": "11:00",
+          "arrivalTime": "15:30"
+        },
+        {
+          "tripDate": "2025-10-12",
+          "departureTime": "11:00",
+          "arrivalTime": "15:30"
+        },
+        {
+          "tripDate": "2025-10-13",
+          "departureTime": "11:00",
+          "arrivalTime": "15:30"
+        },
+        {
+          "tripDate": "2025-10-14",
+          "departureTime": "11:00",
+          "arrivalTime": "15:30"
+        },
+        {
+          "tripDate": "2025-10-15",
+          "departureTime": "11:00",
+          "arrivalTime": "15:30"
+        }
+      ]
+    },
+    {
+      "busId": "B024",
+      "registration": "WP-8934",
+      "routeCode": "R1",
+      "driverName": "Driver 24",
+      "currentLocation": {
+        "latitude": 6.507229,
+        "longitude": 79.421495,
+        "timestamp": "2025-10-09T04:24:25.889861"
+      },
+      "status": "Stopped",
+      "schedule": [
+        {
+          "tripDate": "2025-10-09",
+          "departureTime": "12:00",
+          "arrivalTime": "16:30"
+        },
+        {
+          "tripDate": "2025-10-10",
+          "departureTime": "12:00",
+          "arrivalTime": "16:30"
+        },
+        {
+          "tripDate": "2025-10-11",
+          "departureTime": "12:00",
+          "arrivalTime": "16:30"
+        },
+        {
+          "tripDate": "2025-10-12",
+          "departureTime": "12:00",
+          "arrivalTime": "16:30"
+        },
+        {
+          "tripDate": "2025-10-13",
+          "departureTime": "12:00",
+          "arrivalTime": "16:30"
+        },
+        {
+          "tripDate": "2025-10-14",
+          "departureTime": "12:00",
+          "arrivalTime": "16:30"
+        },
+        {
+          "tripDate": "2025-10-15",
+          "departureTime": "12:00",
+          "arrivalTime": "16:30"
+        }
+      ]
+    },
+    {
+      "busId": "B025",
+      "registration": "WP-6360",
+      "routeCode": "R5",
+      "driverName": "Driver 25",
+      "currentLocation": {
+        "latitude": 7.217746,
+        "longitude": 79.791383,
+        "timestamp": "2025-10-09T04:24:25.889883"
+      },
+      "status": "Stopped",
+      "schedule": [
+        {
+          "tripDate": "2025-10-09",
+          "departureTime": "8:00",
+          "arrivalTime": "12:30"
+        },
+        {
+          "tripDate": "2025-10-10",
+          "departureTime": "8:00",
+          "arrivalTime": "12:30"
+        },
+        {
+          "tripDate": "2025-10-11",
+          "departureTime": "8:00",
+          "arrivalTime": "12:30"
+        },
+        {
+          "tripDate": "2025-10-12",
+          "departureTime": "8:00",
+          "arrivalTime": "12:30"
+        },
+        {
+          "tripDate": "2025-10-13",
+          "departureTime": "8:00",
+          "arrivalTime": "12:30"
+        },
+        {
+          "tripDate": "2025-10-14",
+          "departureTime": "8:00",
+          "arrivalTime": "12:30"
+        },
+        {
+          "tripDate": "2025-10-15",
+          "departureTime": "8:00",
+          "arrivalTime": "12:30"
+        }
+      ]
+    }
+  ]
+}
