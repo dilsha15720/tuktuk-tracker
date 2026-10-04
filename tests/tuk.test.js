@@ -1,7 +1,7 @@
 import request from 'supertest';
 import app from '../server.js';
 import setup from './setup.js';
-import Tuk from '../src/_clean/tuk.model.js';
+import Tuk from '../src/models/tuk.model.js';
 
 let teardown;
 

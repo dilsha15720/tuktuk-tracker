@@ -1,4 +1,4 @@
-import Tuk from '../_clean/tuk.model.js';
+import Tuk from '../models/tuk.model.js';
 
 export const getAllTuks = async (req, res) => {
   try {

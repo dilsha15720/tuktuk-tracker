@@ -1,11 +1,12 @@
 import dotenv from 'dotenv';
+import connectDB from '../config/db.js';
 import fs from 'fs';
 import Route from '../models/route.model.js';
-import Tuk from '../_clean/tuk.model.js';
+import Tuk from '../models/tuk.model.js';
 
 dotenv.config();
 
-export async function runSeed() {
+async function seed() {
   const uri = process.env.MONGODB_URI || '';
   if (!uri) {
     console.warn('MONGODB_URI is not set in .env. The seed will run against an in-memory MongoDB.');
@@ -13,7 +14,10 @@ export async function runSeed() {
     console.warn('MONGODB_URI contains placeholder <db_password>. The seed will run against an in-memory MongoDB instead.');
   }
 
-  // Assumes the caller has already established a DB connection (start.js or CLI wrapper)
+  const connected = await connectDB();
+  if (!connected) {
+    console.warn('Database connection failed; falling back to in-memory DB if available. Continuing with seed.');
+  }
   const file = new URL('../../data/simulation-data.json', import.meta.url);
   const data = JSON.parse(fs.readFileSync(file));
   console.log('Seeding routes and buses...');
@@ -39,6 +43,7 @@ export async function runSeed() {
   }
 
   console.log('Seeding completed.');
+  process.exit(0);
 }
 
-// Keep backward compatibility for CLI by providing a small wrapper CLI file (src/seed/cli.js)
+seed().catch(err => { console.error(err); process.exit(1); });
