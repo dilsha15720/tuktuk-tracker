@@ -136,6 +136,35 @@ export const resourceQuerySchema = Joi.object({
   fields: Joi.string().trim().max(300)
 });
 
+export const vehicleHistoryQuerySchema = Joi.object({
+  from: Joi.date().iso().required(),
+  to: Joi.date().iso().required(),
+  page: Joi.number().integer().min(1),
+  limit: Joi.number().integer().min(1).max(100)
+}).custom((value, helpers) => {
+  if (value.to < value.from) return helpers.error('date.order');
+  if (value.to.getTime() - value.from.getTime() > 7 * 24 * 60 * 60 * 1000) return helpers.error('date.range');
+  return value;
+}).messages({
+  'date.order': 'to must be after from',
+  'date.range': 'from and to cannot span more than 7 days'
+});
+
+export const liveLocationQuerySchema = Joi.object({
+  province: Joi.string().hex().length(24),
+  district: Joi.string().hex().length(24),
+  page: Joi.number().integer().min(1),
+  limit: Joi.number().integer().min(1).max(100)
+});
+
+export const nearbyLocationQuerySchema = Joi.object({
+  lat: Joi.number().min(5.8).max(9.9).required(),
+  lng: Joi.number().min(79.5).max(81.9).required(),
+  radius: Joi.number().positive().max(100).required(),
+  page: Joi.number().integer().min(1),
+  limit: Joi.number().integer().min(1).max(100)
+});
+
 const pingFields = {
   latitude: Joi.number().min(5.8).max(9.9).required(),
   longitude: Joi.number().min(79.5).max(81.9).required(),

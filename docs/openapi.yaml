@@ -177,6 +177,69 @@ paths:
           description: Device updated; rotate returns a new plainKey once
         '403':
           description: Insufficient permission
+  /api/v1/vehicles/{id}/location:
+    get:
+      summary: Get the vehicle's last known location
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/ResourceId' }]
+      responses:
+        '200': { description: Latest vehicle location }
+        '404': { description: Location not found }
+  /api/v1/vehicles/{id}/locations:
+    get:
+      summary: Get vehicle location history for up to seven days
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - $ref: '#/components/parameters/ResourceId'
+        - in: query
+          name: from
+          required: true
+          schema: { type: string, format: date-time }
+        - in: query
+          name: to
+          required: true
+          schema: { type: string, format: date-time }
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200': { description: Chronologically sorted location history }
+        '422': { description: Invalid date range }
+  /api/v1/vehicles/locations/live:
+    get:
+      summary: Get latest locations for a jurisdiction
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: query
+          name: province
+          schema: { type: string }
+        - in: query
+          name: district
+          schema: { type: string }
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200': { description: Paginated latest vehicle locations }
+  /api/v1/vehicles/locations/nearby:
+    get:
+      summary: Get nearby latest vehicle locations
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: query
+          name: lat
+          required: true
+          schema: { type: number, minimum: 5.8, maximum: 9.9 }
+        - in: query
+          name: lng
+          required: true
+          schema: { type: number, minimum: 79.5, maximum: 81.9 }
+        - in: query
+          name: radius
+          required: true
+          schema: { type: number, minimum: 0, maximum: 100, description: Radius in kilometres }
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200': { description: Paginated nearby latest locations }
   /api/v1/vehicles:
     get:
       summary: List scoped vehicles
