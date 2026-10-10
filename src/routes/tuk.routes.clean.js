@@ -8,6 +8,8 @@ router.get('/', tukController.getAllTuks);
 router.get('/:id', tukController.getTukById);
 router.get('/:id/location', tukController.getTukLocation);
 router.post('/', authMiddleware, tukController.createTuk);
+router.patch('/:id', authMiddleware, tukController.updateTuk);
+router.delete('/:id', authMiddleware, tukController.deleteTuk);
 router.post('/:id/location', authMiddleware, tukController.updateTukLocation);
 
 export default router;

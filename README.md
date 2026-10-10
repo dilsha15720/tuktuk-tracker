@@ -66,17 +66,13 @@ ADMIN_PASS=admin123
 
 ## Useful endpoints
 
-- `POST /api/auth/login`  -> body: {"username":"admin","password":"admin123"} -> returns { token }
-- `GET /api/routes` -> public
-- `POST /api/routes` -> protected (admin) - create new route
-- `GET /api/buses` -> public
-- `GET /api/buses/:id` -> get bus details
-- `GET /api/buses/:id/location` -> get current location
-- `POST /api/buses/:id/location` -> protected (admin/operator) - update a bus's location with {"latitude":..., "longitude":...}
-- `POST /api/locations/bulk-update` -> protected - accept array [{"busId", "latitude", "longitude"}, ...]
-
-Use the JWT token in the `Authorization` header: `Authorization: Bearer <token>`
-
+ `GET /api/tuks` -> list tuk-tuks; supports `?status=On%20Route` and `?route=<routeId>`
+ `GET /api/tuks/:id` -> get tuk-tuk details
+ `PATCH /api/tuks/:id` -> protected (admin) - update a tuk-tuk
+ `DELETE /api/tuks/:id` -> protected (admin) - delete a tuk-tuk
+ `GET /api/tuks/:id/location` -> get current location
+ `POST /api/tuks/:id/location` -> protected (admin) - update location with {"latitude":..., "longitude":...}
+ `POST /api/locations/bulk-update` -> protected - accept array [{"tukId", "latitude", "longitude"}]
 ---
 
 ## Seeding & Simulation data

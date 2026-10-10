@@ -2,10 +2,24 @@ openapi: 3.0.0
 info:
   title: Tuk Tracker API
   version: 1.0.0
-  description: Full API specification for the Tuk Tracker service (real-time vehicle tracking).
+  description: Coursework API for tracking tuk-tuks, routes, schedules, and live locations.
 servers:
   - url: http://localhost:5000
 paths:
+  /health:
+    get:
+      summary: Health check
+      responses:
+        '200':
+          description: API is running
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
   /api/auth/login:
     post:
       summary: Admin login
@@ -65,19 +79,44 @@ paths:
                 $ref: '#/components/schemas/Route'
         '401':
           description: Unauthorized
+  /api/routes/{id}:
+    get:
+      summary: Get a route by ID
+      parameters:
+        - $ref: '#/components/parameters/ResourceId'
+      responses:
+        '200':
+          description: Route resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Route'
+        '404':
+          description: Route not found
 
   /api/tuks:
     get:
-      summary: List buses
+      summary: List tuk-tuks
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [On Route, Stopped, Delayed]
+        - in: query
+          name: route
+          description: Filter by route ObjectId
+          schema:
+            type: string
       responses:
         '200':
-          description: Array of buses
+          description: Array of tuk-tuks
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Bus'
+                  $ref: '#/components/schemas/Tuk'
     post:
       summary: Create a tuk (admin)
       security:
@@ -87,23 +126,23 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BusInput'
+              $ref: '#/components/schemas/TukInput'
             examples:
               example:
-                value: { "busId": "BUS001", "registration": "ABC-123", "route": "<routeObjectId>", "driverName": "Driver A" }
+                value: { "tukId": "TUK001", "registration": "ABC-123", "route": "<routeObjectId>", "driverName": "Driver A" }
       responses:
         '201':
-          description: Bus created
+          description: Tuk-tuk created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Bus'
+                $ref: '#/components/schemas/Tuk'
         '401':
           description: Unauthorized
 
   /api/tuks/{id}:
     get:
-      summary: Get bus by id
+      summary: Get tuk-tuk by ID
       parameters:
         - in: path
           name: id
@@ -112,13 +151,45 @@ paths:
             type: string
       responses:
         '200':
-          description: Bus resource
+          description: Tuk-tuk resource
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Bus'
+                $ref: '#/components/schemas/Tuk'
         '404':
           description: Not found
+    patch:
+      summary: Update a tuk-tuk (admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ResourceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TukInput'
+      responses:
+        '200':
+          description: Updated tuk-tuk
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tuk'
+        '401':
+          description: Unauthorized
+    delete:
+      summary: Delete a tuk-tuk (admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ResourceId'
+      responses:
+        '204':
+          description: Tuk-tuk deleted
+        '401':
+          description: Unauthorized
 
   /api/tuks/{id}/location:
     get:
@@ -184,8 +255,8 @@ paths:
             examples:
               example:
                 value:
-                  - { "busId": "BUS001", "latitude": 6.9271, "longitude": 79.8612 }
-                  - { "busId": "BUS002", "latitude": 6.9300, "longitude": 79.8550 }
+                  - { "tukId": "TUK001", "latitude": 6.9271, "longitude": 79.8612 }
+                  - { "tukId": "TUK002", "latitude": 6.9300, "longitude": 79.8550 }
       responses:
         '200':
           description: Bulk update results
@@ -199,12 +270,19 @@ paths:
                     items:
                       type: object
                       properties:
-                        busId:
+                        tukId:
                           type: string
                         ok:
                           type: boolean
 
 components:
+  parameters:
+    ResourceId:
+      in: path
+      name: id
+      required: true
+      schema:
+        type: string
   securitySchemes:
     bearerAuth:
       type: http
@@ -259,12 +337,12 @@ components:
           type: number
       required: [routeCode]
 
-  Bus:
+  Tuk:
     type: object
     properties:
       _id:
         type: string
-      busId:
+      tukId:
         type: string
       registration:
         type: string
@@ -292,7 +370,7 @@ components:
   TukInput:
     type: object
     properties:
-      busId:
+      tukId:
         type: string
       registration:
         type: string
@@ -300,7 +378,7 @@ components:
         type: string
       driverName:
         type: string
-    required: [busId]
+    required: [tukId]
 
   Location:
     type: object
@@ -325,10 +403,10 @@ components:
   BulkLocationUpdateItem:
     type: object
     properties:
-      busId:
+      tukId:
         type: string
       latitude:
         type: number
       longitude:
         type: number
-    required: [busId, latitude, longitude]
+    required: [tukId, latitude, longitude]

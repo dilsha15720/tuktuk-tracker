@@ -7,24 +7,23 @@ import Tuk from '../models/tuk.model.js';
 dotenv.config();
 
 async function seed() {
-  const uri = process.env.MONGODB_URI || '';
-  if (!uri) {
-    console.warn('MONGODB_URI is not set in .env. The seed will run against an in-memory MongoDB.');
-  } else if (uri.includes('<db_password>')) {
-    console.warn('MONGODB_URI contains placeholder <db_password>. The seed will run against an in-memory MongoDB instead.');
-  }
-
+  process.env.REQUIRE_MONGODB = 'true';
   const connected = await connectDB();
   if (!connected) {
-    console.warn('Database connection failed; falling back to in-memory DB if available. Continuing with seed.');
+    throw new Error('A persistent MongoDB connection is required for seeding.');
   }
   const file = new URL('../../data/simulation-data.json', import.meta.url);
   const data = JSON.parse(fs.readFileSync(file));
-  console.log('Seeding routes and buses...');
+  let routesAdded = 0;
+  let tuksAdded = 0;
+  console.log('Seeding routes and tuks...');
 
   for (const r of data.routes) {
     const existing = await Route.findOne({ routeCode: r.routeCode });
-    if (!existing) await Route.create(r);
+    if (!existing) {
+      await Route.create(r);
+      routesAdded += 1;
+    }
   }
 
   for (const b of data.buses) {
@@ -39,10 +38,13 @@ async function seed() {
       schedule: b.schedule
     };
     const existingTuk = await Tuk.findOne({ tukId: b.busId });
-    if (!existingTuk) await Tuk.create(tukObj);
+    if (!existingTuk) {
+      await Tuk.create(tukObj);
+      tuksAdded += 1;
+    }
   }
 
-  console.log('Seeding completed.');
+  console.log(`Seeding completed: ${routesAdded} routes and ${tuksAdded} tuks added.`);
   process.exit(0);
 }
 

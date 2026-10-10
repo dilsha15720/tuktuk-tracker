@@ -2,12 +2,12 @@ import mongoose from 'mongoose';
 
 const TukSchema = new mongoose.Schema({
   tukId: { type: String, required: true, unique: true },
-  registration: String,
+  registration: { type: String, required: true, trim: true },
   route: { type: mongoose.Schema.Types.ObjectId, ref: 'Route' },
-  driverName: String,
+  driverName: { type: String, trim: true },
   currentLocation: {
-    latitude: Number,
-    longitude: Number,
+    latitude: { type: Number, min: -90, max: 90 },
+    longitude: { type: Number, min: -180, max: 180 },
     timestamp: Date
   },
   status: { type: String, enum: ['On Route', 'Stopped', 'Delayed'], default: 'On Route' },
@@ -18,6 +18,6 @@ const TukSchema = new mongoose.Schema({
       arrivalTime: String
     }
   ]
-});
+}, { timestamps: true });
 
 export default mongoose.model('Tuk', TukSchema);
