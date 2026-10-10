@@ -1,0 +1,18 @@
+{
+  "purpose": "Coursework demonstration data for the Sri Lanka police Tuk Tracker API",
+  "generatedBy": "src/seed/seed.js",
+  "masterData": {
+    "provinces": 9,
+    "districts": 25,
+    "policeStations": 20
+  },
+  "registeredTuks": 200,
+  "locationHistory": {
+    "days": 7,
+    "pingsPerTuk": 28,
+    "totalPings": 5600,
+    "intervalsPerDay": 4,
+    "simulationDate": "SIMULATION_DATE environment variable or current date"
+  },
+  "verificationCommand": "npm run validate:simulation"
+}

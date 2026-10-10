@@ -19,3 +19,9 @@ services:
         sync: false
       - key: ADMIN_PASS
         sync: false
+      - key: OPERATOR_USER
+        sync: false
+      - key: OPERATOR_PASS
+        sync: false
+      - key: CORS_ORIGIN
+        value: '*'

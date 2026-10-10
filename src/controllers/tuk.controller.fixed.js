@@ -1,11 +1,14 @@
 import Tuk from '../models/tuk.model.js';
+import LocationPing from '../models/location-ping.model.js';
 
 export const getAllTuks = async (req, res) => {
   try {
     const filter = {};
     if (req.query.status) filter.status = req.query.status;
     if (req.query.route) filter.route = req.query.route;
-    const tuks = await Tuk.find(filter).populate('route').sort({ tukId: 1 });
+    const tuks = await Tuk.find(filter)
+      .populate('route province district policeStation')
+      .sort({ tukId: 1 });
     res.json(tuks);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -14,7 +17,7 @@ export const getAllTuks = async (req, res) => {
 
 export const getTukById = async (req, res) => {
   try {
-    const tuk = await Tuk.findById(req.params.id).populate('route');
+    const tuk = await Tuk.findById(req.params.id).populate('route province district policeStation');
     if (!tuk) return res.status(404).json({ message: 'Tuk not found' });
     res.json(tuk);
   } catch (err) {
@@ -29,6 +32,24 @@ export const getTukLocation = async (req, res) => {
     res.json(tuk.currentLocation || null);
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+};
+
+export const getTukHistory = async (req, res) => {
+  try {
+    const tuk = await Tuk.findById(req.params.id).select('tukId registration');
+    if (!tuk) return res.status(404).json({ message: 'Tuk not found' });
+    const filter = { tuk: tuk._id };
+    if (req.query.from || req.query.to) {
+      filter.recordedAt = {};
+      if (req.query.from) filter.recordedAt.$gte = new Date(req.query.from);
+      if (req.query.to) filter.recordedAt.$lte = new Date(req.query.to);
+    }
+    const limit = Math.min(Math.max(Number(req.query.limit) || 100, 1), 1000);
+    const points = await LocationPing.find(filter).sort({ recordedAt: -1 }).limit(limit);
+    res.json({ tuk, count: points.length, points });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
   }
 };
 
@@ -75,6 +96,12 @@ export const updateTukLocation = async (req, res) => {
     if (!tuk) return res.status(404).json({ message: 'Tuk not found' });
     tuk.currentLocation = { latitude, longitude, timestamp: new Date() };
     await tuk.save();
+    await LocationPing.create({
+      tuk: tuk._id,
+      location: { latitude, longitude },
+      recordedAt: tuk.currentLocation.timestamp,
+      source: 'device'
+    });
     res.json({ message: 'Location updated', currentLocation: tuk.currentLocation });
   } catch (err) {
     res.status(400).json({ message: err.message });

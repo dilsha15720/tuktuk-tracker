@@ -3,7 +3,11 @@ import mongoose from 'mongoose';
 const TukSchema = new mongoose.Schema({
   tukId: { type: String, required: true, unique: true },
   registration: { type: String, required: true, trim: true },
+  deviceId: { type: String, required: true, unique: true, trim: true },
   route: { type: mongoose.Schema.Types.ObjectId, ref: 'Route' },
+  province: { type: mongoose.Schema.Types.ObjectId, ref: 'Province', required: true },
+  district: { type: mongoose.Schema.Types.ObjectId, ref: 'District', required: true },
+  policeStation: { type: mongoose.Schema.Types.ObjectId, ref: 'PoliceStation', required: true },
   driverName: { type: String, trim: true },
   currentLocation: {
     latitude: { type: Number, min: -90, max: 90 },

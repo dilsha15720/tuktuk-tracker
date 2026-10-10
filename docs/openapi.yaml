@@ -275,6 +275,93 @@ paths:
                         ok:
                           type: boolean
 
+  /api/master-data/provinces:
+    get:
+      summary: List all nine provinces
+      responses:
+        '200':
+          description: Province master data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Province'
+  /api/master-data/districts:
+    get:
+      summary: List districts, optionally filtered by province
+      parameters:
+        - in: query
+          name: province
+          schema:
+            type: string
+      responses:
+        '200':
+          description: District master data
+  /api/master-data/stations:
+    get:
+      summary: List police stations, optionally filtered by district
+      parameters:
+        - in: query
+          name: district
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Police station master data
+  /api/history:
+    get:
+      summary: Query movement history
+      parameters:
+        - in: query
+          name: tukId
+          schema:
+            type: string
+        - in: query
+          name: from
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: to
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 100
+            maximum: 1000
+      responses:
+        '200':
+          description: Location history points
+
+  /api/tuks/{id}/history:
+    get:
+      summary: Get movement history for one tuk-tuk
+      parameters:
+        - $ref: '#/components/parameters/ResourceId'
+        - in: query
+          name: from
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: to
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 100
+            maximum: 1000
+      responses:
+        '200':
+          description: Tuk movement history
+
 components:
   parameters:
     ResourceId:
@@ -337,7 +424,7 @@ components:
           type: number
       required: [routeCode]
 
-  Tuk:
+    Tuk:
     type: object
     properties:
       _id:
@@ -346,6 +433,14 @@ components:
         type: string
       registration:
         type: string
+      deviceId:
+        type: string
+      province:
+        $ref: '#/components/schemas/Province'
+      district:
+        $ref: '#/components/schemas/District'
+      policeStation:
+        $ref: '#/components/schemas/PoliceStation'
       route:
         $ref: '#/components/schemas/Route'
       driverName:
@@ -367,6 +462,42 @@ components:
             arrivalTime:
               type: string
 
+    Province:
+      type: object
+      properties:
+        _id:
+          type: string
+        code:
+          type: string
+        name:
+          type: string
+
+    District:
+      type: object
+      properties:
+        _id:
+          type: string
+        code:
+          type: string
+        name:
+          type: string
+        province:
+          $ref: '#/components/schemas/Province'
+
+    PoliceStation:
+      type: object
+      properties:
+        _id:
+          type: string
+        stationCode:
+          type: string
+        name:
+          type: string
+        district:
+          $ref: '#/components/schemas/District'
+        location:
+          $ref: '#/components/schemas/Location'
+
   TukInput:
     type: object
     properties:
@@ -378,7 +509,15 @@ components:
         type: string
       driverName:
         type: string
-    required: [tukId]
+        deviceId:
+          type: string
+        province:
+          type: string
+        district:
+          type: string
+        policeStation:
+          type: string
+    required: [tukId, registration, deviceId, province, district, policeStation]
 
   Location:
     type: object
