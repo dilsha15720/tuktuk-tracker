@@ -81,3 +81,12 @@ test('device key records pings and skips duplicate timestamps in a batch', async
   const latest = await VehicleLastLocation.findOne({ vehicleId: vehicle._id }).lean();
   expect(latest.location.coordinates).toEqual([79.8612, 6.9271]);
 });
+
+test('invalid device keys return 401', async () => {
+  const response = await request(app)
+    .post(`/api/v1/devices/${new mongoose.Types.ObjectId()}/pings`)
+    .set('X-Device-Key', 'UNKNOWN-DEVICE.invalid-key')
+    .send({ latitude: 6.9, longitude: 79.8, speed: 10, heading: 90, recordedAt: new Date().toISOString() });
+  expect(response.statusCode).toBe(401);
+  expect(response.body.code).toBe('INVALID_DEVICE_KEY');
+});

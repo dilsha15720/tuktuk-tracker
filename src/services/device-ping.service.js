@@ -16,6 +16,7 @@ function toPingDocument(ping, device, vehicle) {
     deviceId: device._id,
     provinceId: vehicle.provinceId,
     districtId: vehicle.districtId,
+    stationId: vehicle.stationId,
     location: { type: 'Point', coordinates: [ping.longitude, ping.latitude] },
     speed: ping.speed,
     heading: ping.heading,
@@ -39,6 +40,7 @@ async function updateLastLocation(ping, vehicle, device) {
         $set: {
           provinceId: vehicle.provinceId,
           districtId: vehicle.districtId,
+          stationId: vehicle.stationId,
           deviceId: device._id,
           location: ping.location,
           speed: ping.speed,

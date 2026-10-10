@@ -11,6 +11,7 @@ const locationPingSchema = new mongoose.Schema({
   deviceId: { type: mongoose.Schema.Types.ObjectId, ref: 'Device', required: true },
   provinceId: { type: mongoose.Schema.Types.ObjectId, ref: 'Province', required: true },
   districtId: { type: mongoose.Schema.Types.ObjectId, ref: 'District', required: true },
+  stationId: { type: mongoose.Schema.Types.ObjectId, ref: 'PoliceStation' },
   location: {
     type: { type: String, enum: ['Point'], default: 'Point', required: true },
     coordinates: {

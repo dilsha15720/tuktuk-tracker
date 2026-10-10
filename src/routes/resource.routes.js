@@ -16,9 +16,9 @@ export function createResourceRoutes(resource, createSchema, updateSchema) {
   const roles = [authenticate, authorizeRoles('HQ_ADMIN', 'PROVINCIAL_OFFICER', 'STATION_OFFICER')];
   router.get('/', ...roles, validate(resourceQuerySchema, 'query', 422), controller.list);
   router.post('/', ...roles, validate(createSchema, 'body', 422), controller.create);
-  router.get('/:id', ...roles, validate(objectIdParamsSchema, 'params', 422), controller.get);
-  router.patch('/:id', ...roles, validate(objectIdParamsSchema, 'params', 422), validate(updateSchema, 'body', 422), controller.update);
-  router.delete('/:id', ...roles, validate(objectIdParamsSchema, 'params', 422), controller.remove);
+  router.get('/:id', ...roles, validate(objectIdParamsSchema, 'params', 400), controller.get);
+  router.patch('/:id', ...roles, validate(objectIdParamsSchema, 'params', 400), validate(updateSchema, 'body', 422), controller.update);
+  router.delete('/:id', ...roles, validate(objectIdParamsSchema, 'params', 400), controller.remove);
   return router;
 }
 

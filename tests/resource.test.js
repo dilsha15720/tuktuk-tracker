@@ -47,6 +47,26 @@ test('vehicle CRUD validates, sets Location, detects duplicate plates, and suppo
   expect(deleted.statusCode).toBe(204);
 });
 
+test('protected resources reject missing tokens, invalid IDs, and NoSQL operator keys', async () => {
+  const missing = await request(app).get('/api/v1/vehicles');
+  expect(missing.statusCode).toBe(401);
+  expect(missing.body.code).toBe('AUTH_REQUIRED');
+
+  const invalidId = await request(app).get('/api/v1/vehicles/not-an-object-id').set('Authorization', `Bearer ${token}`);
+  expect(invalidId.statusCode).toBe(400);
+  expect(invalidId.body.code).toBe('VALIDATION_ERROR');
+
+  const injection = await request(app).post('/api/v1/vehicles').set('Authorization', `Bearer ${token}`).send({
+    '$where': 'this.status === "ACTIVE"',
+    plateNumber: 'UNSAFE',
+    provinceId: new mongoose.Types.ObjectId().toString(),
+    districtId: new mongoose.Types.ObjectId().toString(),
+    stationId: new mongoose.Types.ObjectId().toString()
+  });
+  expect(injection.statusCode).toBe(400);
+  expect(injection.body.code).toBe('UNSAFE_INPUT');
+});
+
 test('driver create and invalid vehicle input return expected statuses', async () => {
   const invalid = await request(app).post('/api/v1/vehicles').set('Authorization', `Bearer ${token}`).send({ plateNumber: 'INVALID' });
   expect(invalid.statusCode).toBe(422);

@@ -225,6 +225,7 @@ async function seedMovement(fleet, master) {
           deviceId: device._id,
           provinceId: crossing ? anomalyDistrict.province : vehicle.provinceId,
           districtId: crossing ? anomalyDistrict._id : vehicle.districtId,
+          stationId: vehicle.stationId,
           location: { type: 'Point', coordinates: [longitude, latitude] },
           speed,
           heading: Math.floor(Math.random() * 360),

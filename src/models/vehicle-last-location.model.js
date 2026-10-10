@@ -8,6 +8,7 @@ const vehicleLastLocationSchema = new mongoose.Schema({
   vehicleId: { type: mongoose.Schema.Types.ObjectId, ref: 'Vehicle', required: true, unique: true },
   provinceId: { type: mongoose.Schema.Types.ObjectId, ref: 'Province', required: true },
   districtId: { type: mongoose.Schema.Types.ObjectId, ref: 'District', required: true },
+  stationId: { type: mongoose.Schema.Types.ObjectId, ref: 'PoliceStation' },
   deviceId: { type: mongoose.Schema.Types.ObjectId, ref: 'Device', required: true },
   location: {
     type: { type: String, enum: ['Point'], default: 'Point', required: true },

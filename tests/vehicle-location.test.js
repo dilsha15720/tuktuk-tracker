@@ -32,10 +32,10 @@ test('vehicle location endpoints return scoped last, history, live, and nearby d
   const older = new Date(Date.now() - 2 * 60 * 1000);
   const newer = new Date(Date.now() - 60 * 1000);
   await LocationPing.create([
-    { vehicleId: vehicle._id, deviceId, provinceId, districtId, location: { type: 'Point', coordinates: [79.8612, 6.9271] }, speed: 20, heading: 90, recordedAt: older },
-    { vehicleId: vehicle._id, deviceId, provinceId, districtId, location: { type: 'Point', coordinates: [79.8622, 6.9281] }, speed: 25, heading: 100, recordedAt: newer }
+    { vehicleId: vehicle._id, deviceId, provinceId, districtId, stationId, location: { type: 'Point', coordinates: [79.8612, 6.9271] }, speed: 20, heading: 90, recordedAt: older },
+    { vehicleId: vehicle._id, deviceId, provinceId, districtId, stationId, location: { type: 'Point', coordinates: [79.8622, 6.9281] }, speed: 25, heading: 100, recordedAt: newer }
   ]);
-  await VehicleLastLocation.create({ vehicleId: vehicle._id, deviceId, provinceId, districtId, location: { type: 'Point', coordinates: [79.8622, 6.9281] }, speed: 25, heading: 100, recordedAt: newer });
+  await VehicleLastLocation.create({ vehicleId: vehicle._id, deviceId, provinceId, districtId, stationId, location: { type: 'Point', coordinates: [79.8622, 6.9281] }, speed: 25, heading: 100, recordedAt: newer });
 
   const last = await request(app).get(`/api/v1/vehicles/${vehicle._id}/location`).set('Authorization', `Bearer ${token}`);
   expect(last.statusCode).toBe(200);
