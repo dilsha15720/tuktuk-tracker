@@ -7,6 +7,7 @@ import masterDataRoutes from './master-data.routes.js';
 import historyRoutes from './history.routes.js';
 import administrationRoutes from './administration.routes.js';
 import deviceRoutes from './device.routes.js';
+import { vehicleRoutes, driverRoutes } from './resource.routes.js';
 
 const router = express.Router();
 
@@ -17,6 +18,8 @@ router.use('/locations', locationRoutes);
 router.use('/master-data', masterDataRoutes);
 router.use('/history', historyRoutes);
 router.use('/devices', deviceRoutes);
+router.use('/vehicles', vehicleRoutes);
+router.use('/drivers', driverRoutes);
 router.use('/', administrationRoutes);
 
 export default router;

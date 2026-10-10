@@ -6,11 +6,11 @@ import Joi from 'joi';
  * @param {'body'|'query'|'params'} source Request section to validate.
  * @returns {import('express').RequestHandler} Express middleware.
  */
-export function validate(schema, source) {
+export function validate(schema, source, statusCode = 400) {
   return (req, res, next) => {
     const { error, value } = schema.validate(req[source], { abortEarly: false, stripUnknown: true });
     if (error) {
-      return res.status(400).json({
+      return res.status(statusCode).json({
         error: { code: 'VALIDATION_ERROR', message: 'Request validation failed', details: error.details.map((item) => item.message) }
       });
     }
@@ -95,6 +95,41 @@ export const createDeviceSchema = Joi.object({
 
 export const deviceActionSchema = Joi.object({
   action: Joi.string().valid('revoke', 'rotate').required()
+});
+
+const jurisdictionFields = {
+  provinceId: Joi.string().hex().length(24),
+  districtId: Joi.string().hex().length(24),
+  stationId: Joi.string().hex().length(24)
+};
+
+export const vehicleSchema = Joi.object({
+  plateNumber: Joi.string().trim().max(30).required(),
+  ...jurisdictionFields,
+  driverId: Joi.string().hex().length(24),
+  deviceId: Joi.string().hex().length(24),
+  status: Joi.string().valid('ACTIVE', 'INACTIVE', 'SUSPENDED')
+}).fork(['provinceId', 'districtId', 'stationId'], (field) => field.required());
+export const vehicleUpdateSchema = vehicleSchema.fork(['plateNumber', 'provinceId', 'districtId', 'stationId'], (field) => field.optional()).min(1);
+
+export const driverSchema = Joi.object({
+  fullName: Joi.string().trim().max(120).required(),
+  licenceNumber: Joi.string().trim().max(50).required(),
+  phoneNumber: Joi.string().trim().max(30),
+  ...jurisdictionFields,
+  isActive: Joi.boolean()
+}).min(2);
+export const driverUpdateSchema = driverSchema.fork(['fullName', 'licenceNumber'], (field) => field.optional()).min(1);
+
+export const resourceQuerySchema = Joi.object({
+  page: Joi.number().integer().min(1),
+  limit: Joi.number().integer().min(1).max(100),
+  sort: Joi.string().pattern(/^-?(createdAt|plateNumber|fullName|licenceNumber|status)$/),
+  province: Joi.string().hex().length(24),
+  district: Joi.string().hex().length(24),
+  status: Joi.string().valid('ACTIVE', 'INACTIVE', 'SUSPENDED'),
+  plate: Joi.string().trim().max(30),
+  fields: Joi.string().trim().max(300)
 });
 
 export const administrationQuerySchema = Joi.object({

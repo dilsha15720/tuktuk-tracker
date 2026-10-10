@@ -177,6 +177,124 @@ paths:
           description: Device updated; rotate returns a new plainKey once
         '403':
           description: Insufficient permission
+  /api/v1/vehicles:
+    get:
+      summary: List scoped vehicles
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+        - in: query
+          name: province
+          schema: { type: string }
+        - in: query
+          name: district
+          schema: { type: string }
+        - in: query
+          name: status
+          schema: { type: string, enum: [ACTIVE, INACTIVE, SUSPENDED] }
+        - in: query
+          name: plate
+          schema: { type: string }
+        - in: query
+          name: fields
+          description: Comma-separated allowlisted fields
+          schema: { type: string }
+      responses:
+        '200': { description: Paginated vehicle list }
+    post:
+      summary: Create a vehicle
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/VehicleInput' }
+      responses:
+        '201': { description: Created with Location header }
+        '409': { description: Duplicate plate number }
+        '422': { description: Validation failure }
+  /api/v1/vehicles/{id}:
+    get:
+      summary: Get a scoped vehicle
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/ResourceId' }]
+      responses:
+        '200': { description: Vehicle resource }
+        '404': { description: Vehicle not found }
+    patch:
+      summary: Update a vehicle
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/ResourceId' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/VehicleInput' }
+      responses:
+        '200': { description: Updated vehicle }
+        '404': { description: Vehicle not found }
+        '409': { description: Duplicate plate number }
+    delete:
+      summary: Delete a vehicle
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/ResourceId' }]
+      responses:
+        '204': { description: Vehicle deleted }
+        '404': { description: Vehicle not found }
+  /api/v1/drivers:
+    get:
+      summary: List scoped drivers
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+        - in: query
+          name: fields
+          schema: { type: string }
+      responses:
+        '200': { description: Paginated driver list }
+    post:
+      summary: Create a driver
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/DriverInput' }
+      responses:
+        '201': { description: Created with Location header }
+        '409': { description: Duplicate licence number }
+        '422': { description: Validation failure }
+  /api/v1/drivers/{id}:
+    get:
+      summary: Get a scoped driver
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/ResourceId' }]
+      responses:
+        '200': { description: Driver resource }
+        '404': { description: Driver not found }
+    patch:
+      summary: Update a driver
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/ResourceId' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/DriverInput' }
+      responses:
+        '200': { description: Updated driver }
+        '404': { description: Driver not found }
+    delete:
+      summary: Delete a driver
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/ResourceId' }]
+      responses:
+        '204': { description: Driver deleted }
+        '404': { description: Driver not found }
   /api/v1/routes:
     get:
       summary: List all routes
@@ -593,6 +711,30 @@ components:
         password:
           type: string
       required: [username, password]
+
+    VehicleInput:
+      type: object
+      required: [plateNumber, provinceId, districtId, stationId]
+      properties:
+        plateNumber: { type: string }
+        provinceId: { type: string }
+        districtId: { type: string }
+        stationId: { type: string }
+        driverId: { type: string }
+        deviceId: { type: string }
+        status: { type: string, enum: [ACTIVE, INACTIVE, SUSPENDED] }
+
+    DriverInput:
+      type: object
+      required: [fullName, licenceNumber]
+      properties:
+        fullName: { type: string }
+        licenceNumber: { type: string }
+        phoneNumber: { type: string }
+        provinceId: { type: string }
+        districtId: { type: string }
+        stationId: { type: string }
+        isActive: { type: boolean }
 
     Route:
       type: object
