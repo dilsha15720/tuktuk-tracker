@@ -1,4 +1,5 @@
 import * as vehicleLocationService from '../services/vehicle-location.service.js';
+import { sendConditionalJson } from '../utils/conditional-get.js';
 
 /**
  * Set pagination links on a response.
@@ -23,7 +24,7 @@ function setLinks(req, res, pagination) {
 export async function getLastLocation(req, res) {
   const location = await vehicleLocationService.getLastLocation(req.params.id, req.user);
   if (!location) return res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Vehicle last location not found' } });
-  res.json(location);
+  sendConditionalJson(req, res, location);
 }
 
 /**
@@ -35,7 +36,8 @@ export async function getLastLocation(req, res) {
 export async function getHistory(req, res) {
   const result = await vehicleLocationService.listVehicleLocations(req.params.id, req.query, req.user);
   setLinks(req, res, result.pagination);
-  res.json(result);
+  const lastModified = result.data.reduce((latest, item) => item.recordedAt > latest ? item.recordedAt : latest, null);
+  sendConditionalJson(req, res, result, { lastModified });
 }
 
 /**
@@ -47,7 +49,8 @@ export async function getHistory(req, res) {
 export async function getLive(req, res) {
   const result = await vehicleLocationService.listLiveLocations(req.query, req.user);
   setLinks(req, res, result.pagination);
-  res.json(result);
+  const lastModified = result.data.reduce((latest, item) => item.recordedAt > latest ? item.recordedAt : latest, null);
+  sendConditionalJson(req, res, result, { lastModified });
 }
 
 /**

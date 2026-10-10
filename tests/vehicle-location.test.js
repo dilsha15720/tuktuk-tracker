@@ -39,6 +39,12 @@ test('vehicle location endpoints return scoped last, history, live, and nearby d
   const last = await request(app).get(`/api/v1/vehicles/${vehicle._id}/location`).set('Authorization', `Bearer ${token}`);
   expect(last.statusCode).toBe(200);
   expect(last.body.location.coordinates).toEqual([79.8622, 6.9281]);
+  expect(last.headers.etag).toBeDefined();
+  expect(last.headers['last-modified']).toBeDefined();
+  const cachedLast = await request(app).get(`/api/v1/vehicles/${vehicle._id}/location`)
+    .set('Authorization', `Bearer ${token}`)
+    .set('If-None-Match', last.headers.etag);
+  expect(cachedLast.statusCode).toBe(304);
 
   const history = await request(app).get(`/api/v1/vehicles/${vehicle._id}/locations?from=${new Date(Date.now() - 5 * 60 * 1000).toISOString()}&to=${new Date().toISOString()}`).set('Authorization', `Bearer ${token}`);
   expect(history.statusCode).toBe(200);
@@ -51,6 +57,10 @@ test('vehicle location endpoints return scoped last, history, live, and nearby d
   const live = await request(app).get(`/api/v1/vehicles/locations/live?province=${provinceId}`).set('Authorization', `Bearer ${token}`);
   expect(live.statusCode).toBe(200);
   expect(live.body.data).toHaveLength(1);
+  const cachedLive = await request(app).get(`/api/v1/vehicles/locations/live?province=${provinceId}`)
+    .set('Authorization', `Bearer ${token}`)
+    .set('If-None-Match', live.headers.etag);
+  expect(cachedLive.statusCode).toBe(304);
 
   const nearby = await request(app).get('/api/v1/vehicles/locations/nearby?lat=6.9271&lng=79.8612&radius=1').set('Authorization', `Bearer ${token}`);
   expect(nearby.statusCode).toBe(200);

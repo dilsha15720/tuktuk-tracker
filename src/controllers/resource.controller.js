@@ -1,4 +1,5 @@
 import * as resourceService from '../services/resource.service.js';
+import { sendConditionalJson } from '../utils/conditional-get.js';
 
 /**
  * Create a generic resource controller set.
@@ -30,6 +31,7 @@ export function resourceController(resource) {
       try {
         const found = await resourceService.getResource(resource, req.params.id, req.user);
         if (!found) return res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Resource not found' } });
+        if (resource === 'vehicles') return sendConditionalJson(req, res, found);
         res.json(found);
       } catch (error) { next(error); }
     },
