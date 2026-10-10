@@ -19,7 +19,9 @@ router.post('/login', validate(loginSchema, 'body'), async (req, res) => {
   ];
   const user = users.find((candidate) => candidate.username === username);
   if (user && await passwordMatches(password, user.hash, user.legacyPassword)) {
-    const token = jwt.sign({ username, role: user.role, scope: user.scope }, process.env.JWT_SECRET, { expiresIn: '8h' });
+    const token = jwt.sign({ username, role: user.role, scope: user.scope }, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_EXPIRES_IN || '8h'
+    });
     return res.json({ token, role: user.role });
   }
   return res.status(401).json({ message: 'Invalid credentials' });
