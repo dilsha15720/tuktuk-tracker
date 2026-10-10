@@ -127,6 +127,56 @@ paths:
           description: New token pair
         '401':
           description: Invalid or expired refresh token
+  /api/v1/devices:
+    post:
+      summary: Register a tracking device (HQ admin)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceCreate'
+      responses:
+        '201':
+          description: Device registered; plainKey is returned once
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceCreateResponse'
+        '403':
+          description: Insufficient permission
+    get:
+      summary: List devices without secret hashes (HQ admin)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Device list
+  /api/v1/devices/{id}:
+    patch:
+      summary: Revoke or rotate a device key (HQ admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ResourceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [action]
+              properties:
+                action:
+                  type: string
+                  enum: [revoke, rotate]
+      responses:
+        '200':
+          description: Device updated; rotate returns a new plainKey once
+        '403':
+          description: Insufficient permission
   /api/v1/routes:
     get:
       summary: List all routes
@@ -642,6 +692,23 @@ components:
           type: integer
         pages:
           type: integer
+
+    DeviceCreate:
+      type: object
+      required: [vehicleId]
+      properties:
+        vehicleId:
+          type: string
+        deviceCode:
+          type: string
+
+    DeviceCreateResponse:
+      type: object
+      properties:
+        device:
+          type: object
+        plainKey:
+          type: string
 
     Province:
       type: object

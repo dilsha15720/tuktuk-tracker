@@ -88,6 +88,15 @@ export const objectIdParamsSchema = Joi.object({
   id: Joi.string().hex().length(24).required()
 });
 
+export const createDeviceSchema = Joi.object({
+  vehicleId: Joi.string().hex().length(24).required(),
+  deviceCode: Joi.string().trim().max(80)
+});
+
+export const deviceActionSchema = Joi.object({
+  action: Joi.string().valid('revoke', 'rotate').required()
+});
+
 export const administrationQuerySchema = Joi.object({
   page: Joi.number().integer().min(1),
   limit: Joi.number().integer().min(1).max(100),
