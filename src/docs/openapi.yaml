@@ -5,10 +5,30 @@ info:
   description: Coursework API for tracking tuk-tuks, routes, schedules, and live locations.
 servers:
   - url: http://localhost:5000
+tags:
+  - name: System
+    description: Health and operational endpoints
+  - name: Authentication
+    description: User login and token refresh
+  - name: Administration
+    description: Provinces, districts, and police stations
+  - name: Vehicles
+    description: Registered vehicle management and location reads
+  - name: Drivers
+    description: Driver management
+  - name: Devices
+    description: Device registration and secure ping ingestion
+  - name: Routes
+    description: Route management
+  - name: Tuks
+    description: Legacy Tuk Tracker resource endpoints
+  - name: History
+    description: Movement history and audit-protected queries
 paths:
   /health:
     get:
       summary: Health check
+      tags: [System]
       responses:
         '200':
           description: API is running
@@ -23,6 +43,7 @@ paths:
   /api/v1/provinces:
     get:
       summary: List provinces
+      tags: [Administration]
       parameters:
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/Limit'
@@ -44,6 +65,7 @@ paths:
   /api/v1/provinces/{id}/districts:
     get:
       summary: List districts within a province
+      tags: [Administration]
       parameters:
         - $ref: '#/components/parameters/ResourceId'
         - $ref: '#/components/parameters/Page'
@@ -55,6 +77,7 @@ paths:
   /api/v1/districts:
     get:
       summary: List districts
+      tags: [Administration]
       parameters:
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/Limit'
@@ -70,6 +93,7 @@ paths:
   /api/v1/districts/{id}/police-stations:
     get:
       summary: List police stations within a district
+      tags: [Administration]
       parameters:
         - $ref: '#/components/parameters/ResourceId'
         - $ref: '#/components/parameters/Page'
@@ -81,6 +105,7 @@ paths:
   /api/v1/auth/login:
     post:
       summary: Admin login
+      tags: [Authentication]
       description: Authenticate admin and receive JWT token to access protected endpoints.
       requestBody:
         required: true
@@ -112,6 +137,7 @@ paths:
   /api/v1/auth/refresh:
     post:
       summary: Rotate access and refresh tokens
+      tags: [Authentication]
       requestBody:
         required: true
         content:
@@ -130,6 +156,7 @@ paths:
   /api/v1/devices:
     post:
       summary: Register a tracking device (HQ admin)
+      tags: [Devices]
       security:
         - bearerAuth: []
       requestBody:
@@ -149,6 +176,7 @@ paths:
           description: Insufficient permission
     get:
       summary: List devices without secret hashes (HQ admin)
+      tags: [Devices]
       security:
         - bearerAuth: []
       responses:
@@ -157,6 +185,7 @@ paths:
   /api/v1/devices/{id}:
     patch:
       summary: Revoke or rotate a device key (HQ admin)
+      tags: [Devices]
       security:
         - bearerAuth: []
       parameters:
@@ -180,6 +209,7 @@ paths:
   /api/v1/vehicles/{id}/location:
     get:
       summary: Get the vehicle's last known location
+      tags: [Vehicles]
       security: [{ bearerAuth: [] }]
       parameters: [{ $ref: '#/components/parameters/ResourceId' }]
       responses:
@@ -194,6 +224,7 @@ paths:
   /api/v1/vehicles/{id}/locations:
     get:
       summary: Get vehicle location history for up to seven days
+      tags: [History, Vehicles]
       security: [{ bearerAuth: [] }]
       parameters:
         - $ref: '#/components/parameters/ResourceId'
@@ -219,6 +250,7 @@ paths:
   /api/v1/vehicles/locations/live:
     get:
       summary: Get latest locations for a jurisdiction
+      tags: [Vehicles]
       security: [{ bearerAuth: [] }]
       parameters:
         - in: query
@@ -240,6 +272,7 @@ paths:
   /api/v1/vehicles/locations/nearby:
     get:
       summary: Get nearby latest vehicle locations
+      tags: [Vehicles]
       security: [{ bearerAuth: [] }]
       parameters:
         - in: query
@@ -261,6 +294,7 @@ paths:
   /api/v1/vehicles:
     get:
       summary: List scoped vehicles
+      tags: [Vehicles]
       security:
         - bearerAuth: []
       parameters:
@@ -286,6 +320,7 @@ paths:
         '200': { description: Paginated vehicle list }
     post:
       summary: Create a vehicle
+      tags: [Vehicles]
       security:
         - bearerAuth: []
       requestBody:
@@ -300,6 +335,7 @@ paths:
   /api/v1/vehicles/{id}:
     get:
       summary: Get a scoped vehicle
+      tags: [Vehicles]
       security: [{ bearerAuth: [] }]
       parameters: [{ $ref: '#/components/parameters/ResourceId' }]
       responses:
@@ -313,6 +349,7 @@ paths:
         '404': { description: Vehicle not found }
     patch:
       summary: Update a vehicle
+      tags: [Vehicles]
       security: [{ bearerAuth: [] }]
       parameters: [{ $ref: '#/components/parameters/ResourceId' }]
       requestBody:
@@ -326,6 +363,7 @@ paths:
         '409': { description: Duplicate plate number }
     delete:
       summary: Delete a vehicle
+      tags: [Vehicles]
       security: [{ bearerAuth: [] }]
       parameters: [{ $ref: '#/components/parameters/ResourceId' }]
       responses:
@@ -334,6 +372,7 @@ paths:
   /api/v1/drivers:
     get:
       summary: List scoped drivers
+      tags: [Drivers]
       security: [{ bearerAuth: [] }]
       parameters:
         - $ref: '#/components/parameters/Page'
@@ -345,6 +384,7 @@ paths:
         '200': { description: Paginated driver list }
     post:
       summary: Create a driver
+      tags: [Drivers]
       security: [{ bearerAuth: [] }]
       requestBody:
         required: true
@@ -358,6 +398,7 @@ paths:
   /api/v1/drivers/{id}:
     get:
       summary: Get a scoped driver
+      tags: [Drivers]
       security: [{ bearerAuth: [] }]
       parameters: [{ $ref: '#/components/parameters/ResourceId' }]
       responses:
@@ -365,6 +406,7 @@ paths:
         '404': { description: Driver not found }
     patch:
       summary: Update a driver
+      tags: [Drivers]
       security: [{ bearerAuth: [] }]
       parameters: [{ $ref: '#/components/parameters/ResourceId' }]
       requestBody:
@@ -377,6 +419,7 @@ paths:
         '404': { description: Driver not found }
     delete:
       summary: Delete a driver
+      tags: [Drivers]
       security: [{ bearerAuth: [] }]
       parameters: [{ $ref: '#/components/parameters/ResourceId' }]
       responses:
@@ -385,6 +428,7 @@ paths:
   /api/v1/routes:
     get:
       summary: List all routes
+      tags: [Routes]
       responses:
         '200':
           description: Array of route objects
@@ -396,6 +440,7 @@ paths:
                   $ref: '#/components/schemas/Route'
     post:
       summary: Create a route (admin)
+      tags: [Routes]
       security:
         - bearerAuth: []
       requestBody:
@@ -419,6 +464,7 @@ paths:
   /api/v1/devices/{deviceId}/pings:
     post:
       summary: Submit one device location ping
+      tags: [Devices]
       security:
         - deviceKey: []
       parameters:
@@ -443,6 +489,7 @@ paths:
   /api/v1/devices/{deviceId}/pings/batch:
     post:
       summary: Submit up to 100 device location pings
+      tags: [Devices]
       security:
         - deviceKey: []
       parameters:
@@ -470,6 +517,7 @@ paths:
   /api/v1/routes/{id}:
     get:
       summary: Get a route by ID
+      tags: [Routes]
       parameters:
         - $ref: '#/components/parameters/ResourceId'
       responses:
@@ -485,6 +533,7 @@ paths:
   /api/v1/tuks:
     get:
       summary: List tuk-tuks
+      tags: [Tuks]
       parameters:
         - in: query
           name: status
@@ -541,6 +590,7 @@ paths:
                   $ref: '#/components/schemas/Tuk'
     post:
       summary: Create a tuk (admin)
+      tags: [Tuks]
       security:
         - bearerAuth: []
       requestBody:
@@ -565,6 +615,7 @@ paths:
   /api/v1/tuks/stats:
     get:
       summary: Get Tuk operational statistics
+      tags: [Tuks]
       responses:
         '200':
           description: Total Tuk count grouped by status
@@ -576,6 +627,7 @@ paths:
   /api/v1/tuks/{id}:
     get:
       summary: Get tuk-tuk by ID
+      tags: [Tuks]
       parameters:
         - in: path
           name: id
@@ -593,6 +645,7 @@ paths:
           description: Not found
     patch:
       summary: Update a tuk-tuk (admin)
+      tags: [Tuks]
       security:
         - bearerAuth: []
       parameters:
@@ -614,6 +667,7 @@ paths:
           description: Unauthorized
     delete:
       summary: Delete a tuk-tuk (admin)
+      tags: [Tuks]
       security:
         - bearerAuth: []
       parameters:
@@ -627,6 +681,7 @@ paths:
   /api/v1/tuks/{id}/location:
     get:
       summary: Get current location of a tuk
+      tags: [Tuks]
       parameters:
         - in: path
           name: id
@@ -642,6 +697,7 @@ paths:
                 $ref: '#/components/schemas/Location'
     post:
       summary: Update a tuk's location (admin/operator)
+      tags: [Tuks]
       security:
         - bearerAuth: []
       parameters:
@@ -675,6 +731,7 @@ paths:
   /api/v1/locations/bulk-update:
     post:
       summary: Bulk update locations (admin)
+      tags: [Devices]
       security:
         - bearerAuth: []
       requestBody:
@@ -745,6 +802,7 @@ paths:
   /api/v1/history:
     get:
       summary: Query movement history
+      tags: [History]
       parameters:
         - in: query
           name: tukId
@@ -773,6 +831,7 @@ paths:
   /api/v1/tuks/{id}/history:
     get:
       summary: Get movement history for one tuk-tuk
+      tags: [History, Tuks]
       parameters:
         - $ref: '#/components/parameters/ResourceId'
         - in: query
