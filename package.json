@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Starter RESTful API for Tuk Tracker (assignment scaffold)",
   "type": "module",
+  "engines": {
+    "node": ">=20 <21"
+  },
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

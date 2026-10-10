@@ -8,9 +8,9 @@ services:
     healthCheckPath: /health
     envVars:
       - key: NODE_ENV
-        sync: false
+        value: production
       - key: REQUIRE_MONGODB
-        sync: false
+        value: true
       - key: MONGODB_URI
         sync: false
       - key: JWT_SECRET
@@ -18,7 +18,7 @@ services:
       - key: REFRESH_TOKEN_SECRET
         sync: false
       - key: JWT_EXPIRES_IN
-        sync: false
+        value: 8h
       - key: ADMIN_USER
         sync: false
       - key: ADMIN_PASS
