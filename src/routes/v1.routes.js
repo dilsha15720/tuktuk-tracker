@@ -13,6 +13,22 @@ import vehicleLocationRoutes from './vehicle-location.routes.js';
 
 const router = express.Router();
 
+router.get('/', (req, res) => res.json({
+	name: 'Tuk Tracker API',
+	version: 'v1',
+	documentation: '/api-docs/',
+	health: '/health',
+	resources: {
+		authentication: '/api/v1/auth',
+		administration: '/api/v1/provinces',
+		vehicles: '/api/v1/vehicles',
+		drivers: '/api/v1/drivers',
+		devices: '/api/v1/devices',
+		tuks: '/api/v1/tuks',
+		history: '/api/v1/history'
+	}
+}));
+
 router.use('/auth', authRoutes);
 router.use('/tuks', tukRoutes);
 router.use('/routes', routeRoutes);
