@@ -61,22 +61,27 @@ Server default: `http://localhost:5000`
 MONGODB_URI=mongodb://localhost:27017/tuk_tracker
 JWT_SECRET=verysecretkey
 ADMIN_USER=admin
-ADMIN_PASS=admin123
+ADMIN_PASS_HASH=<bcrypt-hash>
+OPERATOR_USER=device-001
+OPERATOR_PASS_HASH=<bcrypt-hash>
 ```
 
 ---
 
 ## Useful endpoints
 
- `GET /api/tuks` -> list tuk-tuks; supports `?status=On%20Route` and `?route=<routeId>`
- `GET /api/tuks?page=1&limit=25&sort=-createdAt&search=TUK` -> paginated, sorted, searchable listing
- `GET /api/tuks/stats` -> operational totals grouped by status
- `GET /api/tuks/:id` -> get tuk-tuk details
- `PATCH /api/tuks/:id` -> protected (admin) - update a tuk-tuk
- `DELETE /api/tuks/:id` -> protected (admin) - delete a tuk-tuk
- `GET /api/tuks/:id/location` -> get current location
- `POST /api/tuks/:id/location` -> protected (admin) - update location with {"latitude":..., "longitude":...}
- `POST /api/locations/bulk-update` -> protected - accept array [{"tukId", "latitude", "longitude"}]
+- `GET /api/v1/tuks` -> list tuk-tuks; supports status, route, province, district, and station filters
+- `GET /api/v1/tuks?page=1&limit=25&sort=-createdAt&search=TUK` -> paginated, sorted, searchable listing
+- `GET /api/v1/tuks/stats` -> operational totals grouped by status
+- `GET /api/v1/tuks/:id` -> get tuk-tuk details
+- `PATCH /api/v1/tuks/:id` -> protected (HQ/provincial officer) - update a tuk-tuk
+- `DELETE /api/v1/tuks/:id` -> protected (HQ admin) - delete a tuk-tuk
+- `GET /api/v1/tuks/:id/history` -> movement history with time-window filters
+- `POST /api/v1/tuks/:id/location` -> protected location update for device/station roles
+- `POST /api/v1/locations/bulk-update` -> protected bulk location updates
+- `GET /api/v1/master-data/provinces` -> all nine provinces
+- `GET /api/v1/master-data/districts` -> districts, filterable by province
+- `GET /api/v1/master-data/stations` -> police stations, filterable by district
 ---
 
 ## Seeding & Simulation data

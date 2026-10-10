@@ -6,6 +6,11 @@
 - Paginated, filtered, searchable, sortable Tuk listing with conditional GET support.
 - Operational Tuk statistics grouped by status.
 - JWT login with `admin` and `operator` roles.
+- JWT roles: `HQ_ADMIN`, `PROVINCIAL_OFFICER`, `STATION_OFFICER`, and `DEVICE`, with optional jurisdiction claims.
+- Canonical versioned API prefix: `/api/v1` (legacy `/api` aliases remain for demo compatibility).
+- Joi input validation and recursive MongoDB operator-key sanitization.
+- Bcrypt password-hash support through `*_PASS_HASH` environment variables.
+- Centralized 404, error, and consistent JSON error responses.
 - Admin-only vehicle and route management.
 - Operator/admin location updates with persisted history pings.
 - Province, district, and police-station filtering endpoints.

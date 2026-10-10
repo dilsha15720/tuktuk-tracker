@@ -7,12 +7,10 @@ import rateLimit from 'express-rate-limit';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 // Use the cleaned router implementation (fallback) until the corrupted tuk.routes.js is removed
-import tukRoutes from './src/routes/tuk.routes.clean.js';
-import routeRoutes from './src/routes/route.routes.js';
-import authRoutes from './src/routes/auth.routes.js';
-import locationRoutes from './src/routes/location.routes.js';
-import masterDataRoutes from './src/routes/master-data.routes.js';
-import historyRoutes from './src/routes/history.routes.js';
+import v1Routes from './src/routes/v1.routes.js';
+import { sanitizeInput } from './src/middleware/sanitize.middleware.js';
+import { errorHandler, notFoundHandler } from './src/middleware/error.middleware.js';
+import { normalizeErrorResponses } from './src/middleware/error-response.middleware.js';
 
 dotenv.config();
 const app = express();
@@ -22,13 +20,12 @@ app.use(cors({ origin: process.env.CORS_ORIGIN || true }));
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 app.use(rateLimit({ windowMs: 15 * 60 * 1000, limit: 300, standardHeaders: 'draft-7', legacyHeaders: false }));
 app.use(express.json({ limit: '100kb' }));
+app.use(sanitizeInput());
+app.use(normalizeErrorResponses());
 
-app.use('/api/auth', authRoutes);
-app.use('/api/tuks', tukRoutes);
-app.use('/api/routes', routeRoutes);
-app.use('/api/locations', locationRoutes);
-app.use('/api/master-data', masterDataRoutes);
-app.use('/api/history', historyRoutes);
+app.use('/api/v1', v1Routes);
+// Compatibility aliases for existing coursework demo scripts; new clients use /api/v1.
+app.use('/api', v1Routes);
 
 app.get('/', (req, res) => res.send('Tuk Tracker API'));
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
@@ -38,7 +35,6 @@ if (process.env.NODE_ENV !== 'test') {
 	try {
 		// Resolve docs path relative to this file so loading works regardless of CWD
 		// (use import.meta.url to compute a stable absolute path)
-		// eslint-disable-next-line no-undef
 		const openapiUrl = new URL('./docs/openapi.yaml', import.meta.url).pathname;
 		const openapiDocument = YAML.load(openapiUrl);
 		openapiDocument.servers = [{ url: process.env.PUBLIC_URL || '/' }];
@@ -46,9 +42,11 @@ if (process.env.NODE_ENV !== 'test') {
 	} catch (err) {
 		// log and continue - avoid throwing during app import
 		// (useful if docs/openapi.yaml is being edited)
-		// eslint-disable-next-line no-console
 		console.warn('Could not load OpenAPI docs:', err.message);
 	}
 }
+
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 export default app;

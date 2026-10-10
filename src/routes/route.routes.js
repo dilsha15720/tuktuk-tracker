@@ -5,6 +5,6 @@ const router = express.Router();
 
 router.get('/', routeController.getAllRoutes);
 router.get('/:id', routeController.getRouteById);
-router.post('/', authMiddleware, requireRoles('admin'), routeController.createRoute);
+router.post('/', authMiddleware, requireRoles('HQ_ADMIN', 'PROVINCIAL_OFFICER'), routeController.createRoute);
 
 export default router;

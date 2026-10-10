@@ -1,19 +1,24 @@
 import Tuk from '../models/tuk.model.js';
 import LocationPing from '../models/location-ping.model.js';
+import { jurisdictionFilter } from '../utils/jurisdiction.js';
+import { getTukStatistics } from '../services/tuk.service.js';
+
+const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 export const getAllTuks = async (req, res) => {
   try {
-    const filter = {};
+    const filter = { ...jurisdictionFilter(req.user) };
     if (req.query.status) filter.status = req.query.status;
     if (req.query.route) filter.route = req.query.route;
     if (req.query.province) filter.province = req.query.province;
     if (req.query.district) filter.district = req.query.district;
     if (req.query.policeStation) filter.policeStation = req.query.policeStation;
     if (req.query.search) {
+      const search = escapeRegex(req.query.search);
       filter.$or = [
-        { tukId: new RegExp(req.query.search, 'i') },
-        { registration: new RegExp(req.query.search, 'i') },
-        { driverName: new RegExp(req.query.search, 'i') }
+        { tukId: new RegExp(search, 'i') },
+        { registration: new RegExp(search, 'i') },
+        { driverName: new RegExp(search, 'i') }
       ];
     }
     const sortFields = new Set(['tukId', 'registration', 'status', 'createdAt']);
@@ -38,11 +43,8 @@ export const getAllTuks = async (req, res) => {
 
 export const getTukStats = async (req, res) => {
   try {
-    const [total, byStatus] = await Promise.all([
-      Tuk.countDocuments(),
-      Tuk.aggregate([{ $group: { _id: '$status', count: { $sum: 1 } } }, { $sort: { _id: 1 } }])
-    ]);
-    res.json({ total, byStatus: byStatus.map(({ _id, count }) => ({ status: _id, count })) });
+    const scope = jurisdictionFilter(req.user);
+    res.json(await getTukStatistics(scope));
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -50,7 +52,7 @@ export const getTukStats = async (req, res) => {
 
 export const getTukById = async (req, res) => {
   try {
-    const tuk = await Tuk.findById(req.params.id).populate('route province district policeStation');
+    const tuk = await Tuk.findOne({ _id: req.params.id, ...jurisdictionFilter(req.user) }).populate('route province district policeStation');
     if (!tuk) return res.status(404).json({ message: 'Tuk not found' });
     res.json(tuk);
   } catch (err) {
@@ -70,7 +72,7 @@ export const getTukLocation = async (req, res) => {
 
 export const getTukHistory = async (req, res) => {
   try {
-    const tuk = await Tuk.findById(req.params.id).select('tukId registration');
+    const tuk = await Tuk.findOne({ _id: req.params.id, ...jurisdictionFilter(req.user) }).select('tukId registration');
     if (!tuk) return res.status(404).json({ message: 'Tuk not found' });
     const filter = { tuk: tuk._id };
     if (req.query.from || req.query.to) {

@@ -5,7 +5,7 @@ import { authMiddleware, requireRoles } from '../utils/auth.js';
 const router = express.Router();
 
 // Bulk update locations (expects [{ busId, latitude, longitude }])
-router.post('/bulk-update', authMiddleware, requireRoles('admin', 'operator'), async (req, res) => {
+router.post('/bulk-update', authMiddleware, requireRoles('HQ_ADMIN', 'STATION_OFFICER', 'DEVICE'), async (req, res) => {
   try {
     const updates = req.body;
     if (!Array.isArray(updates)) {
