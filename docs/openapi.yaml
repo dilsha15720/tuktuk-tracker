@@ -1,0 +1,1076 @@
+openapi: 3.0.0
+info:
+  title: Tuk Tracker API
+  version: 1.0.0
+  description: Coursework API for tracking tuk-tuks, routes, schedules, and live locations.
+servers:
+  - url: http://localhost:5000
+paths:
+  /health:
+    get:
+      summary: Health check
+      responses:
+        '200':
+          description: API is running
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+  /api/v1/provinces:
+    get:
+      summary: List provinces
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Search'
+        - $ref: '#/components/parameters/Sort'
+        - $ref: '#/components/parameters/Order'
+      responses:
+        '200':
+          description: Paginated provinces
+          headers:
+            Link:
+              description: Previous and next page links when available
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedProvinceResponse'
+  /api/v1/provinces/{id}/districts:
+    get:
+      summary: List districts within a province
+      parameters:
+        - $ref: '#/components/parameters/ResourceId'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Search'
+      responses:
+        '200':
+          description: Paginated districts
+  /api/v1/districts:
+    get:
+      summary: List districts
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Search'
+        - in: query
+          name: provinceId
+          schema:
+            type: string
+            pattern: '^[a-fA-F0-9]{24}$'
+      responses:
+        '200':
+          description: Paginated districts
+  /api/v1/districts/{id}/police-stations:
+    get:
+      summary: List police stations within a district
+      parameters:
+        - $ref: '#/components/parameters/ResourceId'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Search'
+      responses:
+        '200':
+          description: Paginated police stations
+  /api/v1/auth/login:
+    post:
+      summary: Admin login
+      description: Authenticate admin and receive JWT token to access protected endpoints.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+            examples:
+              admin:
+                value: { "username": "admin", "password": "admin123" }
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  accessToken:
+                    type: string
+                  refreshToken:
+                    type: string
+                  role:
+                    type: string
+        '401':
+          description: Invalid credentials
+  /api/v1/auth/refresh:
+    post:
+      summary: Rotate access and refresh tokens
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [refreshToken]
+              properties:
+                refreshToken:
+                  type: string
+      responses:
+        '200':
+          description: New token pair
+        '401':
+          description: Invalid or expired refresh token
+  /api/v1/devices:
+    post:
+      summary: Register a tracking device (HQ admin)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceCreate'
+      responses:
+        '201':
+          description: Device registered; plainKey is returned once
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceCreateResponse'
+        '403':
+          description: Insufficient permission
+    get:
+      summary: List devices without secret hashes (HQ admin)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Device list
+  /api/v1/devices/{id}:
+    patch:
+      summary: Revoke or rotate a device key (HQ admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ResourceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [action]
+              properties:
+                action:
+                  type: string
+                  enum: [revoke, rotate]
+      responses:
+        '200':
+          description: Device updated; rotate returns a new plainKey once
+        '403':
+          description: Insufficient permission
+  /api/v1/vehicles/{id}/location:
+    get:
+      summary: Get the vehicle's last known location
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/ResourceId' }]
+      responses:
+        '200': { description: Latest vehicle location }
+        '404': { description: Location not found }
+  /api/v1/vehicles/{id}/locations:
+    get:
+      summary: Get vehicle location history for up to seven days
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - $ref: '#/components/parameters/ResourceId'
+        - in: query
+          name: from
+          required: true
+          schema: { type: string, format: date-time }
+        - in: query
+          name: to
+          required: true
+          schema: { type: string, format: date-time }
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200': { description: Chronologically sorted location history }
+        '422': { description: Invalid date range }
+  /api/v1/vehicles/locations/live:
+    get:
+      summary: Get latest locations for a jurisdiction
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: query
+          name: province
+          schema: { type: string }
+        - in: query
+          name: district
+          schema: { type: string }
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200': { description: Paginated latest vehicle locations }
+  /api/v1/vehicles/locations/nearby:
+    get:
+      summary: Get nearby latest vehicle locations
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: query
+          name: lat
+          required: true
+          schema: { type: number, minimum: 5.8, maximum: 9.9 }
+        - in: query
+          name: lng
+          required: true
+          schema: { type: number, minimum: 79.5, maximum: 81.9 }
+        - in: query
+          name: radius
+          required: true
+          schema: { type: number, minimum: 0, maximum: 100, description: Radius in kilometres }
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200': { description: Paginated nearby latest locations }
+  /api/v1/vehicles:
+    get:
+      summary: List scoped vehicles
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+        - in: query
+          name: province
+          schema: { type: string }
+        - in: query
+          name: district
+          schema: { type: string }
+        - in: query
+          name: status
+          schema: { type: string, enum: [ACTIVE, INACTIVE, SUSPENDED] }
+        - in: query
+          name: plate
+          schema: { type: string }
+        - in: query
+          name: fields
+          description: Comma-separated allowlisted fields
+          schema: { type: string }
+      responses:
+        '200': { description: Paginated vehicle list }
+    post:
+      summary: Create a vehicle
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/VehicleInput' }
+      responses:
+        '201': { description: Created with Location header }
+        '409': { description: Duplicate plate number }
+        '422': { description: Validation failure }
+  /api/v1/vehicles/{id}:
+    get:
+      summary: Get a scoped vehicle
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/ResourceId' }]
+      responses:
+        '200': { description: Vehicle resource }
+        '404': { description: Vehicle not found }
+    patch:
+      summary: Update a vehicle
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/ResourceId' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/VehicleInput' }
+      responses:
+        '200': { description: Updated vehicle }
+        '404': { description: Vehicle not found }
+        '409': { description: Duplicate plate number }
+    delete:
+      summary: Delete a vehicle
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/ResourceId' }]
+      responses:
+        '204': { description: Vehicle deleted }
+        '404': { description: Vehicle not found }
+  /api/v1/drivers:
+    get:
+      summary: List scoped drivers
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+        - in: query
+          name: fields
+          schema: { type: string }
+      responses:
+        '200': { description: Paginated driver list }
+    post:
+      summary: Create a driver
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/DriverInput' }
+      responses:
+        '201': { description: Created with Location header }
+        '409': { description: Duplicate licence number }
+        '422': { description: Validation failure }
+  /api/v1/drivers/{id}:
+    get:
+      summary: Get a scoped driver
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/ResourceId' }]
+      responses:
+        '200': { description: Driver resource }
+        '404': { description: Driver not found }
+    patch:
+      summary: Update a driver
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/ResourceId' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/DriverInput' }
+      responses:
+        '200': { description: Updated driver }
+        '404': { description: Driver not found }
+    delete:
+      summary: Delete a driver
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: '#/components/parameters/ResourceId' }]
+      responses:
+        '204': { description: Driver deleted }
+        '404': { description: Driver not found }
+  /api/v1/routes:
+    get:
+      summary: List all routes
+      responses:
+        '200':
+          description: Array of route objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Route'
+    post:
+      summary: Create a route (admin)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RouteInput'
+            examples:
+              example:
+                value: { "routeCode": "R1", "name": "Downtown Loop", "origin": "Station A", "destination": "Station B", "stops": ["Stop 1","Stop 2"], "distanceKm": 12.5 }
+      responses:
+        '201':
+          description: Route created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Route'
+        '401':
+          description: Unauthorized
+  /api/v1/devices/{deviceId}/pings:
+    post:
+      summary: Submit one device location ping
+      parameters:
+        - in: path
+          name: deviceId
+          required: true
+          schema: { type: string }
+        - in: header
+          name: X-Device-Key
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/DevicePing' }
+      responses:
+        '201': { description: Ping accepted }
+        '401': { description: Missing or invalid device key }
+        '403': { description: Device key does not match path device }
+        '422': { description: Invalid telemetry data }
+  /api/v1/devices/{deviceId}/pings/batch:
+    post:
+      summary: Submit up to 100 device location pings
+      parameters:
+        - in: path
+          name: deviceId
+          required: true
+          schema: { type: string }
+        - in: header
+          name: X-Device-Key
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              maxItems: 100
+              items: { $ref: '#/components/schemas/DevicePing' }
+      responses:
+        '201': { description: Accepted and duplicate ping counts }
+        '401': { description: Missing or invalid device key }
+        '403': { description: Device key does not match path device }
+        '422': { description: Invalid telemetry data }
+  /api/v1/routes/{id}:
+    get:
+      summary: Get a route by ID
+      parameters:
+        - $ref: '#/components/parameters/ResourceId'
+      responses:
+        '200':
+          description: Route resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Route'
+        '404':
+          description: Route not found
+
+  /api/v1/tuks:
+    get:
+      summary: List tuk-tuks
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [On Route, Stopped, Delayed]
+        - in: query
+          name: route
+          description: Filter by route ObjectId
+          schema:
+            type: string
+        - in: query
+          name: province
+          schema:
+            type: string
+        - in: query
+          name: district
+          schema:
+            type: string
+        - in: query
+          name: policeStation
+          schema:
+            type: string
+        - in: query
+          name: search
+          description: Search Tuk ID, registration, or driver name
+          schema:
+            type: string
+        - in: query
+          name: sort
+          description: Sort by tukId, registration, status, or createdAt; prefix with - for descending
+          schema:
+            type: string
+            example: -createdAt
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+      responses:
+        '200':
+          description: Array of tuk-tuks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tuk'
+    post:
+      summary: Create a tuk (admin)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TukInput'
+            examples:
+              example:
+                value: { "tukId": "TUK001", "registration": "ABC-123", "route": "<routeObjectId>", "driverName": "Driver A" }
+      responses:
+        '201':
+          description: Tuk-tuk created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tuk'
+        '401':
+          description: Unauthorized
+
+  /api/v1/tuks/stats:
+    get:
+      summary: Get Tuk operational statistics
+      responses:
+        '200':
+          description: Total Tuk count grouped by status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TukStats'
+
+  /api/v1/tuks/{id}:
+    get:
+      summary: Get tuk-tuk by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Tuk-tuk resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tuk'
+        '404':
+          description: Not found
+    patch:
+      summary: Update a tuk-tuk (admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ResourceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TukInput'
+      responses:
+        '200':
+          description: Updated tuk-tuk
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tuk'
+        '401':
+          description: Unauthorized
+    delete:
+      summary: Delete a tuk-tuk (admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ResourceId'
+      responses:
+        '204':
+          description: Tuk-tuk deleted
+        '401':
+          description: Unauthorized
+
+  /api/v1/tuks/{id}/location:
+    get:
+      summary: Get current location of a tuk
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Current location
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Location'
+    post:
+      summary: Update a tuk's location (admin/operator)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocationUpdate'
+            examples:
+              example:
+                value: { "latitude": 6.9271, "longitude": 79.8612 }
+      responses:
+        '200':
+          description: Location updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+        '401':
+          description: Unauthorized
+
+  /api/v1/locations/bulk-update:
+    post:
+      summary: Bulk update locations (admin)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/BulkLocationUpdateItem'
+            examples:
+              example:
+                value:
+                  - { "tukId": "TUK001", "latitude": 6.9271, "longitude": 79.8612 }
+                  - { "tukId": "TUK002", "latitude": 6.9300, "longitude": 79.8550 }
+      responses:
+        '200':
+          description: Bulk update results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        tukId:
+                          type: string
+                        ok:
+                          type: boolean
+
+  /api/v1/master-data/provinces:
+    get:
+      summary: List all nine provinces
+      responses:
+        '200':
+          description: Province master data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Province'
+  /api/v1/master-data/districts:
+    get:
+      summary: List districts, optionally filtered by province
+      parameters:
+        - in: query
+          name: province
+          schema:
+            type: string
+      responses:
+        '200':
+          description: District master data
+  /api/v1/master-data/stations:
+    get:
+      summary: List police stations, optionally filtered by district
+      parameters:
+        - in: query
+          name: district
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Police station master data
+  /api/v1/history:
+    get:
+      summary: Query movement history
+      parameters:
+        - in: query
+          name: tukId
+          schema:
+            type: string
+        - in: query
+          name: from
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: to
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 100
+            maximum: 1000
+      responses:
+        '200':
+          description: Location history points
+
+  /api/v1/tuks/{id}/history:
+    get:
+      summary: Get movement history for one tuk-tuk
+      parameters:
+        - $ref: '#/components/parameters/ResourceId'
+        - in: query
+          name: from
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: to
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 100
+            maximum: 1000
+      responses:
+        '200':
+          description: Tuk movement history
+
+components:
+  parameters:
+    ResourceId:
+      in: path
+      name: id
+      required: true
+      schema:
+        type: string
+    Page:
+      in: query
+      name: page
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    Limit:
+      in: query
+      name: limit
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 25
+    Search:
+      in: query
+      name: search
+      schema:
+        type: string
+    Sort:
+      in: query
+      name: sort
+      schema:
+        type: string
+    Order:
+      in: query
+      name: order
+      schema:
+        type: string
+        enum: [asc, desc]
+        default: asc
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Login:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required: [username, password]
+
+    VehicleInput:
+      type: object
+      required: [plateNumber, provinceId, districtId, stationId]
+      properties:
+        plateNumber: { type: string }
+        provinceId: { type: string }
+        districtId: { type: string }
+        stationId: { type: string }
+        driverId: { type: string }
+        deviceId: { type: string }
+        status: { type: string, enum: [ACTIVE, INACTIVE, SUSPENDED] }
+
+    DriverInput:
+      type: object
+      required: [fullName, licenceNumber]
+      properties:
+        fullName: { type: string }
+        licenceNumber: { type: string }
+        phoneNumber: { type: string }
+        provinceId: { type: string }
+        districtId: { type: string }
+        stationId: { type: string }
+        isActive: { type: boolean }
+
+    Route:
+      type: object
+      properties:
+        _id:
+          type: string
+        routeCode:
+          type: string
+        name:
+          type: string
+        origin:
+          type: string
+        destination:
+          type: string
+        stops:
+          type: array
+          items:
+            type: string
+        distanceKm:
+          type: number
+
+    RouteInput:
+      type: object
+      properties:
+        routeCode:
+          type: string
+        name:
+          type: string
+        origin:
+          type: string
+        destination:
+          type: string
+        stops:
+          type: array
+          items:
+            type: string
+        distanceKm:
+          type: number
+      required: [routeCode]
+
+    Tuk:
+    type: object
+    properties:
+      _id:
+        type: string
+      tukId:
+        type: string
+      registration:
+        type: string
+      deviceId:
+        type: string
+      province:
+        $ref: '#/components/schemas/Province'
+      district:
+        $ref: '#/components/schemas/District'
+      policeStation:
+        $ref: '#/components/schemas/PoliceStation'
+      route:
+        $ref: '#/components/schemas/Route'
+      driverName:
+        type: string
+      currentLocation:
+        $ref: '#/components/schemas/Location'
+      status:
+        type: string
+      schedule:
+        type: array
+        items:
+          type: object
+          properties:
+            tripDate:
+              type: string
+              format: date-time
+            departureTime:
+              type: string
+            arrivalTime:
+              type: string
+
+    PaginatedProvinceResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Province'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+        pages:
+          type: integer
+
+    DeviceCreate:
+      type: object
+      required: [vehicleId]
+      properties:
+        vehicleId:
+          type: string
+        deviceCode:
+          type: string
+
+    DeviceCreateResponse:
+      type: object
+      properties:
+        device:
+          type: object
+        plainKey:
+          type: string
+
+    DevicePing:
+      type: object
+      required: [latitude, longitude, speed, heading, recordedAt]
+      properties:
+        latitude: { type: number, minimum: 5.8, maximum: 9.9 }
+        longitude: { type: number, minimum: 79.5, maximum: 81.9 }
+        speed: { type: number, minimum: 0, maximum: 150 }
+        heading: { type: number, minimum: 0, maximum: 360 }
+        recordedAt: { type: string, format: date-time }
+
+    Province:
+      type: object
+      properties:
+        _id:
+          type: string
+        code:
+          type: string
+        name:
+          type: string
+
+    TukStats:
+      type: object
+      properties:
+        total:
+          type: integer
+        byStatus:
+          type: array
+          items:
+            type: object
+            properties:
+              status:
+                type: string
+              count:
+                type: integer
+
+    District:
+      type: object
+      properties:
+        _id:
+          type: string
+        code:
+          type: string
+        name:
+          type: string
+        province:
+          $ref: '#/components/schemas/Province'
+
+    PoliceStation:
+      type: object
+      properties:
+        _id:
+          type: string
+        stationCode:
+          type: string
+        name:
+          type: string
+        district:
+          $ref: '#/components/schemas/District'
+        location:
+          $ref: '#/components/schemas/Location'
+
+  TukInput:
+    type: object
+    properties:
+      tukId:
+        type: string
+      registration:
+        type: string
+      route:
+        type: string
+      driverName:
+        type: string
+        deviceId:
+          type: string
+        province:
+          type: string
+        district:
+          type: string
+        policeStation:
+          type: string
+    required: [tukId, registration, deviceId, province, district, policeStation]
+
+  Location:
+    type: object
+    properties:
+      latitude:
+        type: number
+      longitude:
+        type: number
+      timestamp:
+        type: string
+        format: date-time
+
+  LocationUpdate:
+    type: object
+    properties:
+      latitude:
+        type: number
+      longitude:
+        type: number
+    required: [latitude, longitude]
+
+  BulkLocationUpdateItem:
+    type: object
+    properties:
+      tukId:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+    required: [tukId, latitude, longitude]

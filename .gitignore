@@ -5,3 +5,4 @@ data/*.csv
 coverage/
 .last_server_pid
 server.log
+device-keys.json
