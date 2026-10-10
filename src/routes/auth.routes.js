@@ -1,30 +1,37 @@
 import express from 'express';
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
-import { validate, loginSchema } from '../middleware/validate.middleware.js';
+import { validate, loginSchema, refreshSchema } from '../middleware/validate.middleware.js';
+import { authenticateUser, issueTokens, refreshTokens } from '../services/auth.service.js';
+
 const router = express.Router();
 
-const passwordMatches = async (password, hash, legacyPassword) => {
-  if (hash) return bcrypt.compare(password, hash);
-  return process.env.NODE_ENV === 'test' && password === legacyPassword;
-};
+/**
+ * Authenticate a user and issue access/refresh tokens.
+ * @param {import('express').Request} req Express request.
+ * @param {import('express').Response} res Express response.
+ * @returns {Promise<void>} Response promise.
+ */
+async function login(req, res) {
+  const user = await authenticateUser(req.body.username, req.body.password);
+  if (!user) return res.status(401).json({ error: { code: 'INVALID_CREDENTIALS', message: 'Invalid credentials' } });
+  const tokens = issueTokens(user);
+  res.json({ ...tokens, token: tokens.accessToken, role: user.role });
+}
 
-router.post('/login', validate(loginSchema, 'body'), async (req, res) => {
-  const { username, password } = req.body;
-  const users = [
-    { username: process.env.ADMIN_USER, hash: process.env.ADMIN_PASS_HASH, legacyPassword: process.env.ADMIN_PASS, role: 'HQ_ADMIN' },
-    { username: process.env.OPERATOR_USER, hash: process.env.OPERATOR_PASS_HASH, legacyPassword: process.env.OPERATOR_PASS, role: 'DEVICE', scope: { policeStation: process.env.OPERATOR_STATION_ID } },
-    { username: process.env.PROVINCIAL_USER, hash: process.env.PROVINCIAL_PASS_HASH, legacyPassword: process.env.PROVINCIAL_PASS, role: 'PROVINCIAL_OFFICER', scope: { province: process.env.PROVINCIAL_PROVINCE_ID } },
-    { username: process.env.STATION_USER, hash: process.env.STATION_PASS_HASH, legacyPassword: process.env.STATION_PASS, role: 'STATION_OFFICER', scope: { policeStation: process.env.STATION_ID } }
-  ];
-  const user = users.find((candidate) => candidate.username === username);
-  if (user && await passwordMatches(password, user.hash, user.legacyPassword)) {
-    const token = jwt.sign({ username, role: user.role, scope: user.scope }, process.env.JWT_SECRET, {
-      expiresIn: process.env.JWT_EXPIRES_IN || '8h'
-    });
-    return res.json({ token, role: user.role });
+/**
+ * Rotate an access/refresh token pair from a valid refresh token.
+ * @param {import('express').Request} req Express request.
+ * @param {import('express').Response} res Express response.
+ * @returns {Promise<void>} Response promise.
+ */
+async function refresh(req, res) {
+  try {
+    res.json(refreshTokens(req.body.refreshToken));
+  } catch (error) {
+    res.status(401).json({ error: { code: 'INVALID_REFRESH_TOKEN', message: 'Invalid or expired refresh token' } });
   }
-  return res.status(401).json({ message: 'Invalid credentials' });
-});
+}
+
+router.post('/login', validate(loginSchema, 'body'), login);
+router.post('/refresh', validate(refreshSchema, 'body'), refresh);
 
 export default router;

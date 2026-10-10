@@ -24,6 +24,10 @@ export const loginSchema = Joi.object({
   password: Joi.string().min(1).max(200).required()
 });
 
+export const refreshSchema = Joi.object({
+  refreshToken: Joi.string().trim().required()
+});
+
 export const locationSchema = Joi.object({
   latitude: Joi.number().min(-90).max(90).required(),
   longitude: Joi.number().min(-180).max(180).required()
