@@ -1,4 +1,5 @@
 import express from 'express';
+import mongoose from 'mongoose';
 import Tuk from '../models/tuk.model.fixed.js';
 import LocationPing from '../models/location-ping.model.js';
 import { authMiddleware, requireRoles } from '../utils/auth.js';
@@ -25,8 +26,12 @@ router.post('/bulk-update', authMiddleware, requireRoles('HQ_ADMIN', 'STATION_OF
       tuk.currentLocation = { latitude: u.latitude, longitude: u.longitude, timestamp };
       await tuk.save();
       await LocationPing.create({
+        vehicleId: tuk._id,
+        deviceId: new mongoose.Types.ObjectId(),
+        provinceId: tuk.province,
+        districtId: tuk.district,
         tuk: tuk._id,
-        location: { latitude: u.latitude, longitude: u.longitude },
+        location: { type: 'Point', coordinates: [u.longitude, u.latitude] },
         recordedAt: timestamp,
         source: 'device'
       });

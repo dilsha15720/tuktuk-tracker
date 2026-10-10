@@ -122,10 +122,17 @@ async function seed() {
         recordedAt.setDate(recordedAt.getDate() - day);
         recordedAt.setHours(6 + interval * 4, 0, 0, 0);
         pings.push({
+          vehicleId: tuks[index]._id,
+          deviceId: new mongoose.Types.ObjectId(),
+          provinceId: tuks[index].province,
+          districtId: tuks[index].district,
           tuk: tuks[index]._id,
           location: {
-            latitude: 6.0 + ((index * 0.013 + interval * 0.002) % 3.5),
-            longitude: 79.5 + ((index * 0.017 + day * 0.003) % 3.0)
+            type: 'Point',
+            coordinates: [
+              79.5 + ((index * 0.017 + day * 0.003) % 3.0),
+              6.0 + ((index * 0.013 + interval * 0.002) % 3.5)
+            ]
           },
           recordedAt,
           speedKph: 15 + ((index + interval) % 35),

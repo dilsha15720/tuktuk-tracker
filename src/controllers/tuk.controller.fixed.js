@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import Tuk from '../models/tuk.model.js';
 import LocationPing from '../models/location-ping.model.js';
 import { jurisdictionFilter } from '../utils/jurisdiction.js';
@@ -132,8 +133,12 @@ export const updateTukLocation = async (req, res) => {
     tuk.currentLocation = { latitude, longitude, timestamp: new Date() };
     await tuk.save();
     await LocationPing.create({
+      vehicleId: tuk._id,
+      deviceId: new mongoose.Types.ObjectId(),
+      provinceId: tuk.province,
+      districtId: tuk.district,
       tuk: tuk._id,
-      location: { latitude, longitude },
+      location: { type: 'Point', coordinates: [longitude, latitude] },
       recordedAt: tuk.currentLocation.timestamp,
       source: 'device'
     });
