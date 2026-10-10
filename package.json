@@ -9,6 +9,7 @@
     "dev": "nodemon server.js",
     "seed": "node src/seed/seed.js",
     "seed:coursework": "node src/db/seed.js",
+    "simulate": "node simulator/run.js",
     "validate:simulation": "node scripts/validate_simulation.js",
     "export:csv": "node scripts/json-to-csv.js",
     "lint": "eslint .",
