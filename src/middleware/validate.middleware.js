@@ -88,6 +88,10 @@ export const objectIdParamsSchema = Joi.object({
   id: Joi.string().hex().length(24).required()
 });
 
+export const deviceIdParamsSchema = Joi.object({
+  deviceId: Joi.string().hex().length(24).required()
+});
+
 export const createDeviceSchema = Joi.object({
   vehicleId: Joi.string().hex().length(24).required(),
   deviceCode: Joi.string().trim().max(80)
@@ -131,6 +135,20 @@ export const resourceQuerySchema = Joi.object({
   plate: Joi.string().trim().max(30),
   fields: Joi.string().trim().max(300)
 });
+
+const pingFields = {
+  latitude: Joi.number().min(5.8).max(9.9).required(),
+  longitude: Joi.number().min(79.5).max(81.9).required(),
+  speed: Joi.number().min(0).max(150).required(),
+  heading: Joi.number().min(0).max(360).required(),
+  recordedAt: Joi.date().iso().custom((value, helpers) => {
+    if (value.getTime() > Date.now() + 5 * 60 * 1000) return helpers.error('date.max');
+    return value;
+  }).required()
+};
+
+export const pingSchema = Joi.object(pingFields);
+export const pingBatchSchema = Joi.array().items(Joi.object(pingFields)).min(1).max(100);
 
 export const administrationQuerySchema = Joi.object({
   page: Joi.number().integer().min(1),

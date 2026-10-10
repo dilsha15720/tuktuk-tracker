@@ -8,6 +8,7 @@ import historyRoutes from './history.routes.js';
 import administrationRoutes from './administration.routes.js';
 import deviceRoutes from './device.routes.js';
 import { vehicleRoutes, driverRoutes } from './resource.routes.js';
+import devicePingRoutes from './device-ping.routes.js';
 
 const router = express.Router();
 
@@ -18,6 +19,7 @@ router.use('/locations', locationRoutes);
 router.use('/master-data', masterDataRoutes);
 router.use('/history', historyRoutes);
 router.use('/devices', deviceRoutes);
+router.use('/devices', devicePingRoutes);
 router.use('/vehicles', vehicleRoutes);
 router.use('/drivers', driverRoutes);
 router.use('/', administrationRoutes);

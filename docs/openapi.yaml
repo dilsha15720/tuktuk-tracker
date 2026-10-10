@@ -329,6 +329,53 @@ paths:
                 $ref: '#/components/schemas/Route'
         '401':
           description: Unauthorized
+  /api/v1/devices/{deviceId}/pings:
+    post:
+      summary: Submit one device location ping
+      parameters:
+        - in: path
+          name: deviceId
+          required: true
+          schema: { type: string }
+        - in: header
+          name: X-Device-Key
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/DevicePing' }
+      responses:
+        '201': { description: Ping accepted }
+        '401': { description: Missing or invalid device key }
+        '403': { description: Device key does not match path device }
+        '422': { description: Invalid telemetry data }
+  /api/v1/devices/{deviceId}/pings/batch:
+    post:
+      summary: Submit up to 100 device location pings
+      parameters:
+        - in: path
+          name: deviceId
+          required: true
+          schema: { type: string }
+        - in: header
+          name: X-Device-Key
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              maxItems: 100
+              items: { $ref: '#/components/schemas/DevicePing' }
+      responses:
+        '201': { description: Accepted and duplicate ping counts }
+        '401': { description: Missing or invalid device key }
+        '403': { description: Device key does not match path device }
+        '422': { description: Invalid telemetry data }
   /api/v1/routes/{id}:
     get:
       summary: Get a route by ID
@@ -851,6 +898,16 @@ components:
           type: object
         plainKey:
           type: string
+
+    DevicePing:
+      type: object
+      required: [latitude, longitude, speed, heading, recordedAt]
+      properties:
+        latitude: { type: number, minimum: 5.8, maximum: 9.9 }
+        longitude: { type: number, minimum: 79.5, maximum: 81.9 }
+        speed: { type: number, minimum: 0, maximum: 150 }
+        heading: { type: number, minimum: 0, maximum: 360 }
+        recordedAt: { type: string, format: date-time }
 
     Province:
       type: object
