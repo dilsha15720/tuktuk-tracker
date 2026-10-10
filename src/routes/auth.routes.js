@@ -2,6 +2,7 @@ import express from 'express';
 import rateLimit from 'express-rate-limit';
 import { validate, loginSchema, refreshSchema } from '../middleware/validate.middleware.js';
 import { authenticateUser, issueTokens, refreshTokens } from '../services/auth.service.js';
+import { asyncHandler } from '../utils/async-handler.js';
 
 const router = express.Router();
 const loginLimiter = rateLimit({
@@ -39,7 +40,7 @@ async function refresh(req, res) {
   }
 }
 
-router.post('/login', loginLimiter, validate(loginSchema, 'body'), login);
-router.post('/refresh', validate(refreshSchema, 'body'), refresh);
+router.post('/login', loginLimiter, validate(loginSchema, 'body'), asyncHandler(login));
+router.post('/refresh', validate(refreshSchema, 'body'), asyncHandler(refresh));
 
 export default router;

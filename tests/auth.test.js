@@ -34,7 +34,7 @@ test('POST /api/v1/auth/refresh rotates a valid refresh token', async () => {
 test('POST /api/v1/auth/refresh rejects an invalid refresh token', async () => {
   const res = await request(app).post('/api/v1/auth/refresh').send({ refreshToken: 'invalid' });
   expect(res.statusCode).toBe(401);
-  expect(res.body.error.code).toBe('INVALID_REFRESH_TOKEN');
+  expect(res.body.code).toBe('INVALID_REFRESH_TOKEN');
 });
 
 test('POST /api/auth/login rejects invalid creds', async () => {
