@@ -1,187 +1,296 @@
-# Tuk Tracker API (Starter Project)
+# Tuk Tracker API
 
-**Student ID:** YOUR_STUDENT_ID_HERE
+**Project:** RESTful API for Sri Lanka Police real-time tuk-tuk tracking and movement logging
 
-**What this is**
-A ready-to-run Node.js + Express starter project implementing a RESTful API for a Real-Time Bus Tracking System (assignment scaffold for NIB304CEM).
+**Student ID:** `STUDENT_ID_HERE`
 
-**What you get**
-- API endpoints for routes and tuks
-- Basic JWT-based login (admin) for protected endpoints
-- Seed script to load simulation data (5 routes, 25 buses, schedules for next 7 days)
-- Example `simulation-data.json` under `data/`
-- Instructions to run, seed, push to GitHub and deploy
+**GitHub:** https://github.com/dilsha15720/tuktuk-tracker
 
----
+## Overview
 
-## Quick start
+Tuk Tracker is a Node.js REST API for registering tuk-tuks, drivers, tracking devices, police jurisdictions, live locations, and historical movement pings. It supports HQ administrators, provincial officers, station officers, and device clients.
 
-1. Copy `.env.example` to `.env` and edit values (MONGODB_URI, JWT_SECRET, ADMIN_USER, ADMIN_PASS).
-2. Install dependencies:
+The API includes:
+
+- Province, district, and police-station master data.
+- Vehicle and driver CRUD with jurisdiction scoping.
+- Device-key authentication for tracking devices.
+- JWT access and refresh tokens for users.
+- Current and historical vehicle locations.
+- Pagination, filtering, sorting, field selection, and conditional GET caching.
+- Audit logging for movement-history access.
+- Swagger/OpenAPI documentation.
+- Generated coursework simulation data and a live movement simulator.
+
+## Stack
+
+- Node.js 20
+- JavaScript ES modules
+- Express
+- MongoDB and Mongoose
+- JWT and bcrypt
+- Joi validation
+- Swagger UI Express and OpenAPI 3
+- Jest, Supertest, and mongodb-memory-server
+- ESLint and Prettier
+- Render deployment with MongoDB Atlas
+
+## Setup
+
+Requirements:
+
+- Node.js 20+
+- MongoDB Atlas or local MongoDB
+- npm
+
+Install dependencies:
+
 ```bash
-npm install
+npm ci
 ```
 
-Repository helper
------------------
-There's a helper script to initialize and push this repo to GitHub using the GitHub CLI:
-
-1. Make it executable:
+Create the local environment file:
 
 ```bash
-chmod +x scripts/create_and_push_repo.sh
+cp .env.example .env
 ```
 
-2. Run it (defaults are GitHub user `dilsha15720`, repo `tuk-tracker-api`, public):
+Never commit `.env`, database passwords, bcrypt hashes, or `device-keys.json`.
+
+## Environment Variables
+
+Set these values in `.env` locally and in the Render dashboard:
+
+```env
+PORT=5000
+MONGODB_URI=mongodb+srv://USER:PASSWORD@CLUSTER.mongodb.net/tuk_tracker
+JWT_SECRET=replace-with-a-long-secret
+REFRESH_TOKEN_SECRET=replace-with-another-long-secret
+JWT_EXPIRES_IN=8h
+NODE_ENV=development
+REQUIRE_MONGODB=true
+CORS_ORIGINS=http://localhost:3000,http://localhost:5000
+PUBLIC_URL=http://localhost:5000
+
+ADMIN_USER=admin
+ADMIN_PASS_HASH=replace-with-bcrypt-hash
+
+OPERATOR_USER=device-001
+OPERATOR_PASS_HASH=replace-with-bcrypt-hash
+OPERATOR_STATION_ID=
+
+PROVINCIAL_USER=provincial-officer
+PROVINCIAL_PASS_HASH=replace-with-bcrypt-hash
+PROVINCIAL_PROVINCE_ID=
+
+STATION_USER=station-officer
+STATION_PASS_HASH=replace-with-bcrypt-hash
+STATION_ID=
+STATION_DISTRICT_ID=
+```
+
+Use URL-encoded credentials in `MONGODB_URI`. Do not share passwords or full connection strings.
+
+## Run the API
+
+Development mode:
 
 ```bash
-GITHUB_USER=dilsha15720 REPO_NAME=tuk-tracker-api VISIBILITY=public ./scripts/create_and_push_repo.sh
-```
-
-If you don't have the GitHub CLI installed the script will exit with instructions to create the repo manually.
-```
-3. Seed the database (ensure MongoDB is running and `.env` MONGODB_URI is correct):
-```bash
-npm run seed
-# verify the coursework minimum counts after seeding
-npm run validate:simulation
-```
-4. Run the server:
-```bash
-npm start
-# or for development with auto-restart (requires nodemon)
 npm run dev
 ```
-Server default: `http://localhost:5000`
 
----
+Production-style startup:
 
-## Important .env values (example)
-```
-MONGODB_URI=mongodb://localhost:27017/tuk_tracker
-JWT_SECRET=verysecretkey
-ADMIN_USER=admin
-ADMIN_PASS_HASH=<bcrypt-hash>
-OPERATOR_USER=device-001
-OPERATOR_PASS_HASH=<bcrypt-hash>
+```bash
+npm start
 ```
 
----
+The server connects to MongoDB before listening. Health check:
 
-## Useful endpoints
+```text
+http://localhost:5000/health
+```
 
-- `GET /api/v1/tuks` -> list tuk-tuks; supports status, route, province, district, and station filters
-- `GET /api/v1/tuks?page=1&limit=25&sort=-createdAt&search=TUK` -> paginated, sorted, searchable listing
-- `GET /api/v1/tuks/stats` -> operational totals grouped by status
-- `GET /api/v1/tuks/:id` -> get tuk-tuk details
-- `PATCH /api/v1/tuks/:id` -> protected (HQ/provincial officer) - update a tuk-tuk
-- `DELETE /api/v1/tuks/:id` -> protected (HQ admin) - delete a tuk-tuk
-- `GET /api/v1/tuks/:id/history` -> movement history with time-window filters
-- `POST /api/v1/tuks/:id/location` -> protected location update for device/station roles
-- `POST /api/v1/locations/bulk-update` -> protected bulk location updates
-- `GET /api/v1/master-data/provinces` -> all nine provinces
-- `GET /api/v1/master-data/districts` -> districts, filterable by province
-- `GET /api/v1/master-data/stations` -> police stations, filterable by district
----
+Swagger UI:
 
-## Seeding & Simulation data
-The coursework-scale simulation is generated by `src/seed/seed.js`: 9 provinces, 25 districts, 20 police stations, 200 registered tuk-tuks, and 5,600 movement pings across the previous seven days. Run `npm run seed` to populate MongoDB, then `npm run validate:simulation` to produce count evidence for the demonstration. The design is recorded in `data/simulation-manifest.json`.
+```text
+http://localhost:5000/api-docs
+```
 
-For the full Vehicle/Driver/Device coursework dataset, run `npm run seed:coursework`. It creates 9 provinces, 25 districts, 20 police stations, 3 demo role users, 220 vehicles with drivers and devices, seven days of active-hours random-walk history, and JSON exports under `data/`. Raw device keys are written to the git-ignored `device-keys.json`. Use `npm run seed:coursework -- --reset` only when intentionally replacing the seeded collections.
+Canonical API prefix:
 
-To run the live device simulator after seeding:
+```text
+/api/v1
+```
+
+Legacy `/api` aliases remain for older demonstration scripts.
+
+## Main Endpoints
+
+Authentication:
+
+```text
+POST /api/v1/auth/login
+POST /api/v1/auth/refresh
+```
+
+Administration:
+
+```text
+GET /api/v1/provinces
+GET /api/v1/provinces/:id/districts
+GET /api/v1/districts
+GET /api/v1/districts/:id/police-stations
+```
+
+Vehicles and drivers:
+
+```text
+GET|POST /api/v1/vehicles
+GET|PATCH|DELETE /api/v1/vehicles/:id
+GET|POST /api/v1/drivers
+GET|PATCH|DELETE /api/v1/drivers/:id
+```
+
+Vehicle locations:
+
+```text
+GET /api/v1/vehicles/:id/location
+GET /api/v1/vehicles/:id/locations?from=&to=
+GET /api/v1/vehicles/locations/live?province=&district=
+GET /api/v1/vehicles/locations/nearby?lat=&lng=&radius=
+```
+
+Device operations:
+
+```text
+POST|GET /api/v1/devices
+PATCH /api/v1/devices/:id
+POST /api/v1/devices/:deviceId/pings
+POST /api/v1/devices/:deviceId/pings/batch
+```
+
+Device pings use the `X-Device-Key` header. A device key is returned only when a device is created or rotated.
+
+## Coursework Seed Data
+
+The full coursework seed creates:
+
+- 9 provinces.
+- 25 districts.
+- 20 police stations.
+- 3 demo role users.
+- 220 vehicles.
+- 220 drivers and devices.
+- Seven days of active-hours movement history.
+- JSON exports in `data/`.
+- Raw device keys in ignored `device-keys.json`.
+
+Run the seed:
+
+```bash
+npm run seed:coursework
+```
+
+Regenerate all coursework collections:
+
+```bash
+npm run seed:coursework -- --reset
+```
+
+The reset flag deletes the seeded collections before rebuilding them. Use it intentionally.
+
+## Simulator
+
+After running the coursework seed, start continuous simulated device movement:
 
 ```bash
 API_URL=http://localhost:5000 PING_INTERVAL_SECONDS=30 npm run simulate
-# use -- --once for one demonstration tick
-API_URL=https://your-api.example.com npm run simulate -- --once
 ```
 
-The simulator reads `device-keys.json`, persists positions in the ignored `simulator/state.json`, and sends one batch request per device so each vehicle continues from its last local position.
+Run one tick only:
 
----
-
-## Version control and GitHub (recommended steps)
-
-From project root:
 ```bash
-git init
-git add .
-git commit -m "Initial commit - Tuk Tracker API scaffold"
-# create GitHub repo (via web UI) named 'tuk-tracker-api' and then:
-git remote add origin https://github.com/<your-username>/tuk-tracker-api.git
-git branch -M main
-git push -u origin main
+API_URL=http://localhost:5000 npm run simulate -- --once
 ```
 
-**Important for your coursework:**
-- Put your *student ID* in `README.md` (edit it).
-- Add your instructor as a *collaborator* on the GitHub repo (use the GitHub repo settings -> Collaborators).
+The simulator reads `device-keys.json` and stores positions in ignored `simulator/state.json`.
 
----
+## Tests and Quality Checks
 
-## Deployment (summary)
+Run the complete test suite:
+
+```bash
+npm test
+```
+
+Run lint:
+
+```bash
+npm run lint
+```
+
+Check formatting:
+
+```bash
+npm run format:check
+```
+
+Validate the coursework database counts:
+
+```bash
+npm run validate:simulation
+```
+
+## Deployment
+
 ### MongoDB Atlas
 
-1. Create a free MongoDB Atlas cluster and database user.
-2. In **Network Access**, allow the deployment host. For a first Render deployment, `0.0.0.0/0` is the simple option; use tighter network rules when available.
-3. Copy the Atlas driver URI and replace the password. The database name in the URI can be `tuk_tracker`.
-4. Seed the persistent database locally:
+1. Create an Atlas cluster and database user.
+2. Add your local IP and Render access under Network Access.
+3. Set `MONGODB_URI` in Render without committing it to GitHub.
+4. Seed the persistent database from a trusted machine with `npm run seed:coursework`.
 
-```bash
-MONGODB_URI="mongodb+srv://USER:PASSWORD@CLUSTER.mongodb.net/tuk_tracker" npm run seed
-```
-
-### Render deployment
+### Render
 
 This repository includes `render.yaml`.
 
-1. In Render, choose **New > Blueprint** and select the GitHub repository.
-2. Set `MONGODB_URI`, `ADMIN_USER`, and `ADMIN_PASS` in the Render environment settings. `JWT_SECRET` is generated by the blueprint.
-3. Deploy with the blueprint. Render uses `npm ci` to build and `npm start` to run the API.
-4. Verify the deployment:
+1. Open Render and choose **New > Blueprint**.
+2. Select this GitHub repository and the `main` branch.
+3. Set all environment variable values in the Render dashboard.
+4. Deploy the service.
+
+Deployed API URL:
+
+```text
+https://YOUR-RENDER-SERVICE.onrender.com
+```
+
+Health URL:
 
 ```text
 https://YOUR-RENDER-SERVICE.onrender.com/health
+```
+
+Swagger URL:
+
+```text
 https://YOUR-RENDER-SERVICE.onrender.com/api-docs
 ```
 
-Swagger uses the deployed host automatically. The production server refuses to start if `MONGODB_URI` is missing or unreachable, preventing accidental use of temporary in-memory data.
+OpenAPI source:
 
----
+```text
+src/docs/openapi.yaml
+```
 
-## Notes for the assignment / report
-- In the report include the API URL, GitHub repo URL, and any AI tools used.
-- Explain design choices (schemas, endpoints, authentication).
-- Mention limitations and next steps (e.g., real-time websockets, map visualization, scaling).
-- Keep plagiarism rules in mind and explain your code during viva.
+## Coursework Submission Checklist
 
----
-
-## Appendix (fill this before submission)
-
-1. Deployed API URL (must be publicly accessible, not localhost):
-
-	https://<your-deployment-url>
-
-2. API specification (Swagger):
-
-	- Swagger UI: https://<your-deployment-url>/api-docs
-	- OpenAPI file: docs/openapi.yaml
-
-3. GitHub repositories (public or private with instructor as collaborator):
-
-	- https://github.com/<your-username>/tuk-tracker-api
-
-4. AI aides and generated prompts (if any):
-
-	- Tools used: e.g., ChatGPT, GitHub Copilot
-	- Prompts and outputs: include links or saved prompt/output files if used
-
-5. Any additional notes (limitations, known issues, scaling concerns):
-
-	- 
-
-Good luck! If you want, I can:
-- create the GitHub repo for you (I can show the exact `git` commands to run and a suggested README edit with your student ID),
-- or generate a short deployment checklist for Render/Railway.
+- Replace `STUDENT_ID_HERE` with your actual student ID.
+- Add the lecturer as a GitHub collaborator.
+- Deploy the API publicly; do not submit localhost URLs.
+- Add the deployed API URL and Swagger URL to the report appendix.
+- Include the GitHub repository URL.
+- Run the seed and validation commands and keep the output as evidence.
+- Explain the architecture, security, database design, simulator, and tests in the viva.
+- Write the report in your own words and follow the institution's academic-integrity requirements.
