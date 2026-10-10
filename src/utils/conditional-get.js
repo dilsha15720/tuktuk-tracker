@@ -7,8 +7,10 @@ import crypto from 'node:crypto';
  * @param {unknown} value JSON response value.
  * @returns {Date|null} Latest response timestamp.
  */
+/** Find the newest timestamp recursively. @param {unknown} value JSON value. @returns {Date|null} Latest date. */
 function findLastModified(value) {
   const dates = [];
+  /** Visit a nested JSON value. @param {unknown} item Nested value. @returns {void} Collects timestamps. */
   const visit = (item) => {
     if (Array.isArray(item)) return item.forEach(visit);
     if (!item || typeof item !== 'object') return;

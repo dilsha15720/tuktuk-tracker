@@ -1,5 +1,6 @@
 import Tuk from '../models/tuk.model.js';
 
+/** List Tuks. @param {import('express').Request} req Request. @param {import('express').Response} res Response. @returns {Promise<void>} Response promise. */
 export const getAllTuks = async (req, res) => {
   try {
     const tuks = await Tuk.find().populate('route');
@@ -9,6 +10,7 @@ export const getAllTuks = async (req, res) => {
   }
 };
 
+/** Get one Tuk. @param {import('express').Request} req Request. @param {import('express').Response} res Response. @returns {Promise<void>} Response promise. */
 export const getTukById = async (req, res) => {
   try {
     const tuk = await Tuk.findById(req.params.id).populate('route');
@@ -19,6 +21,7 @@ export const getTukById = async (req, res) => {
   }
 };
 
+/** Get Tuk location. @param {import('express').Request} req Request. @param {import('express').Response} res Response. @returns {Promise<void>} Response promise. */
 export const getTukLocation = async (req, res) => {
   try {
     const tuk = await Tuk.findById(req.params.id);
@@ -29,6 +32,7 @@ export const getTukLocation = async (req, res) => {
   }
 };
 
+/** Create a Tuk. @param {import('express').Request} req Request. @param {import('express').Response} res Response. @returns {Promise<void>} Response promise. */
 export const createTuk = async (req, res) => {
   try {
     const tuk = new Tuk(req.body);
@@ -39,6 +43,7 @@ export const createTuk = async (req, res) => {
   }
 };
 
+/** Update Tuk location. @param {import('express').Request} req Request. @param {import('express').Response} res Response. @returns {Promise<void>} Response promise. */
 export const updateTukLocation = async (req, res) => {
   try {
     const { latitude, longitude } = req.body;

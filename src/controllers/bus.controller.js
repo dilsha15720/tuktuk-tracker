@@ -1,5 +1,6 @@
 import Bus from '../models/bus.model.js';
 
+/** List buses. @param {import('express').Request} req Request. @param {import('express').Response} res Response. @returns {Promise<void>} Response promise. */
 export const getAllBuses = async (req, res) => {
   try {
     const buses = await Bus.find().populate('route');
@@ -9,6 +10,7 @@ export const getAllBuses = async (req, res) => {
   }
 };
 
+/** Get one bus. @param {import('express').Request} req Request. @param {import('express').Response} res Response. @returns {Promise<void>} Response promise. */
 export const getBusById = async (req, res) => {
   try {
     const bus = await Bus.findById(req.params.id).populate('route');
@@ -19,6 +21,7 @@ export const getBusById = async (req, res) => {
   }
 };
 
+/** Get bus location. @param {import('express').Request} req Request. @param {import('express').Response} res Response. @returns {Promise<void>} Response promise. */
 export const getBusLocation = async (req, res) => {
   try {
     const bus = await Bus.findById(req.params.id);
@@ -29,6 +32,7 @@ export const getBusLocation = async (req, res) => {
   }
 };
 
+/** Create a bus. @param {import('express').Request} req Request. @param {import('express').Response} res Response. @returns {Promise<void>} Response promise. */
 export const createBus = async (req, res) => {
   try {
     const bus = new Bus(req.body);
@@ -39,6 +43,7 @@ export const createBus = async (req, res) => {
   }
 };
 
+/** Update a bus location. @param {import('express').Request} req Request. @param {import('express').Response} res Response. @returns {Promise<void>} Response promise. */
 export const updateBusLocation = async (req, res) => {
   try {
     const { latitude, longitude } = req.body;

@@ -3,11 +3,13 @@ import Province from '../models/province.model.js';
 import District from '../models/district.model.js';
 import PoliceStation from '../models/police-station.model.js';
 
+/** List provinces. @param {import('express').Request} req Request. @param {import('express').Response} res Response. @returns {Promise<void>} Response promise. */
 export const getProvinces = async (req, res) => {
   const provinces = await Province.find().sort({ name: 1 });
   res.json(provinces);
 };
 
+/** List districts with optional province filtering. @param {import('express').Request} req Request. @param {import('express').Response} res Response. @returns {Promise<void>} Response promise. */
 export const getDistricts = async (req, res) => {
   const filter = {};
   if (req.query.province) {
@@ -21,6 +23,7 @@ export const getDistricts = async (req, res) => {
   res.json(districts);
 };
 
+/** List police stations with optional district filtering. @param {import('express').Request} req Request. @param {import('express').Response} res Response. @returns {Promise<void>} Response promise. */
 export const getPoliceStations = async (req, res) => {
   const filter = {};
   if (req.query.district) {

@@ -29,6 +29,7 @@ export function authenticate(req, res, next) {
  * @returns {import('express').RequestHandler} Express middleware.
  */
 export function authorizeRoles(...roles) {
+  /** Enforce one of the configured roles. @param {import('express').Request} req Request. @param {import('express').Response} res Response. @param {import('express').NextFunction} next Next function. @returns {void} */
   return (req, res, next) => {
     if (!req.user || !roles.includes(req.user.role)) {
       return res.status(403).json({ error: { code: 'FORBIDDEN', message: 'Insufficient permission' } });

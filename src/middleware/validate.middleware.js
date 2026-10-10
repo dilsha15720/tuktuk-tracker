@@ -7,6 +7,7 @@ import Joi from 'joi';
  * @returns {import('express').RequestHandler} Express middleware.
  */
 export function validate(schema, source, statusCode = 400) {
+  /** Validate the configured request section. @param {import('express').Request} req Request. @param {import('express').Response} res Response. @param {import('express').NextFunction} next Next function. @returns {void} */
   return (req, res, next) => {
     const { error, value } = schema.validate(req[source], { abortEarly: false, stripUnknown: true });
     if (error) {

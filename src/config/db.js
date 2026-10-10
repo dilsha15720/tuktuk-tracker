@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 let _inMemoryServer = null;
 
+/** Connect to configured MongoDB or the local test fallback. @returns {Promise<boolean>} Connection result. */
 const connectDB = async () => {
   const uri = process.env.MONGODB_URI || '';
   const requireMongoDB = process.env.NODE_ENV === 'production' || process.env.REQUIRE_MONGODB === 'true';
@@ -42,6 +43,7 @@ const connectDB = async () => {
 };
 
 // Optional helper to stop the in-memory server when the process exits
+/** Stop the optional in-memory MongoDB server. @returns {Promise<void>} Stop promise. */
 const stopInMemoryServer = async () => {
   try {
     if (_inMemoryServer) await _inMemoryServer.stop();

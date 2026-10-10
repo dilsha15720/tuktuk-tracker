@@ -3,6 +3,7 @@
  * @returns {import('express').RequestHandler} Express middleware.
  */
 export function normalizeErrorResponses() {
+  /** Normalize legacy error bodies. @param {import('express').Request} req Request. @param {import('express').Response} res Response. @param {import('express').NextFunction} next Next function. @returns {void} */
   return (req, res, next) => {
     const sendJson = res.json.bind(res);
     res.json = (body) => {

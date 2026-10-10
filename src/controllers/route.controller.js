@@ -1,5 +1,6 @@
 import Route from '../models/route.model.js';
 
+/** List routes. @param {import('express').Request} req Request. @param {import('express').Response} res Response. @returns {Promise<void>} Response promise. */
 export const getAllRoutes = async (req, res) => {
   try {
     const routes = await Route.find();
@@ -9,6 +10,7 @@ export const getAllRoutes = async (req, res) => {
   }
 };
 
+/** Get one route. @param {import('express').Request} req Request. @param {import('express').Response} res Response. @returns {Promise<void>} Response promise. */
 export const getRouteById = async (req, res) => {
   try {
     const route = await Route.findById(req.params.id);
@@ -19,6 +21,7 @@ export const getRouteById = async (req, res) => {
   }
 };
 
+/** Create a route. @param {import('express').Request} req Request. @param {import('express').Response} res Response. @returns {Promise<void>} Response promise. */
 export const createRoute = async (req, res) => {
   try {
     const r = new Route(req.body);

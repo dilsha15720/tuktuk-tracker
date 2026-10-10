@@ -6,6 +6,7 @@ import { getTukStatistics } from '../services/tuk.service.js';
 
 const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
+/** List scoped and filtered Tuks. @param {import('express').Request} req Request. @param {import('express').Response} res Response. @returns {Promise<void>} Response promise. */
 export const getAllTuks = async (req, res) => {
   try {
     const filter = { ...jurisdictionFilter(req.user) };
@@ -42,6 +43,7 @@ export const getAllTuks = async (req, res) => {
   }
 };
 
+/** Return Tuk status statistics. @param {import('express').Request} req Request. @param {import('express').Response} res Response. @returns {Promise<void>} Response promise. */
 export const getTukStats = async (req, res) => {
   try {
     const scope = jurisdictionFilter(req.user);
@@ -51,6 +53,7 @@ export const getTukStats = async (req, res) => {
   }
 };
 
+/** Get one Tuk. @param {import('express').Request} req Request. @param {import('express').Response} res Response. @returns {Promise<void>} Response promise. */
 export const getTukById = async (req, res) => {
   try {
     const tuk = await Tuk.findOne({ _id: req.params.id, ...jurisdictionFilter(req.user) }).populate('route province district policeStation');
@@ -61,6 +64,7 @@ export const getTukById = async (req, res) => {
   }
 };
 
+/** Get current Tuk location. @param {import('express').Request} req Request. @param {import('express').Response} res Response. @returns {Promise<void>} Response promise. */
 export const getTukLocation = async (req, res) => {
   try {
     const tuk = await Tuk.findById(req.params.id);
@@ -71,6 +75,7 @@ export const getTukLocation = async (req, res) => {
   }
 };
 
+/** Get Tuk movement history. @param {import('express').Request} req Request. @param {import('express').Response} res Response. @returns {Promise<void>} Response promise. */
 export const getTukHistory = async (req, res) => {
   try {
     const tuk = await Tuk.findOne({ _id: req.params.id, ...jurisdictionFilter(req.user) }).select('tukId registration');
@@ -89,6 +94,7 @@ export const getTukHistory = async (req, res) => {
   }
 };
 
+/** Create a Tuk. @param {import('express').Request} req Request. @param {import('express').Response} res Response. @returns {Promise<void>} Response promise. */
 export const createTuk = async (req, res) => {
   try {
     const tuk = new Tuk(req.body);
@@ -99,6 +105,7 @@ export const createTuk = async (req, res) => {
   }
 };
 
+/** Update a Tuk. @param {import('express').Request} req Request. @param {import('express').Response} res Response. @returns {Promise<void>} Response promise. */
 export const updateTuk = async (req, res) => {
   try {
     const tuk = await Tuk.findByIdAndUpdate(req.params.id, req.body, {
@@ -112,6 +119,7 @@ export const updateTuk = async (req, res) => {
   }
 };
 
+/** Delete a Tuk. @param {import('express').Request} req Request. @param {import('express').Response} res Response. @returns {Promise<void>} Response promise. */
 export const deleteTuk = async (req, res) => {
   try {
     const tuk = await Tuk.findByIdAndDelete(req.params.id);
@@ -122,6 +130,7 @@ export const deleteTuk = async (req, res) => {
   }
 };
 
+/** Update and persist a Tuk location. @param {import('express').Request} req Request. @param {import('express').Response} res Response. @returns {Promise<void>} Response promise. */
 export const updateTukLocation = async (req, res) => {
   try {
     const { latitude, longitude } = req.body;
