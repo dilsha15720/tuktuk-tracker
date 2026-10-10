@@ -4,6 +4,8 @@
 
 **Student ID:** `COBSCCOMP241P-033`
 
+**Student Name:** SACHINI DILSHA PANDITHARATHNA
+
 **GitHub:** https://github.com/dilsha15720/tuktuk-tracker
 
 ## Overview
