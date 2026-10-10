@@ -42,7 +42,7 @@ app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
 if (process.env.NODE_ENV !== 'test') {
   try {
-    const openapiUrl = new URL('./docs/openapi.yaml', import.meta.url).pathname;
+    const openapiUrl = new URL('./src/docs/openapi.yaml', import.meta.url).pathname;
     const openapiDocument = YAML.load(openapiUrl);
     openapiDocument.servers = [{ url: process.env.PUBLIC_URL || '/' }];
     app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiDocument));

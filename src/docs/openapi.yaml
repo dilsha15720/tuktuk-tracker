@@ -183,7 +183,13 @@ paths:
       security: [{ bearerAuth: [] }]
       parameters: [{ $ref: '#/components/parameters/ResourceId' }]
       responses:
-        '200': { description: Latest vehicle location }
+        '200':
+          description: Latest vehicle location
+          headers:
+            ETag: { schema: { type: string } }
+            Last-Modified: { schema: { type: string, format: http-date } }
+            Cache-Control: { schema: { type: string } }
+        '304': { description: Not modified when If-None-Match or If-Modified-Since matches }
         '404': { description: Location not found }
   /api/v1/vehicles/{id}/locations:
     get:
@@ -202,7 +208,13 @@ paths:
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/Limit'
       responses:
-        '200': { description: Chronologically sorted location history }
+        '200':
+          description: Chronologically sorted location history
+          headers:
+            ETag: { schema: { type: string } }
+            Last-Modified: { schema: { type: string, format: http-date } }
+            Cache-Control: { schema: { type: string } }
+        '304': { description: Not modified when conditional headers match }
         '422': { description: Invalid date range }
   /api/v1/vehicles/locations/live:
     get:
@@ -218,7 +230,13 @@ paths:
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/Limit'
       responses:
-        '200': { description: Paginated latest vehicle locations }
+        '200':
+          description: Paginated latest vehicle locations
+          headers:
+            ETag: { schema: { type: string } }
+            Last-Modified: { schema: { type: string, format: http-date } }
+            Cache-Control: { schema: { type: string } }
+        '304': { description: Not modified when conditional headers match }
   /api/v1/vehicles/locations/nearby:
     get:
       summary: Get nearby latest vehicle locations
@@ -285,7 +303,13 @@ paths:
       security: [{ bearerAuth: [] }]
       parameters: [{ $ref: '#/components/parameters/ResourceId' }]
       responses:
-        '200': { description: Vehicle resource }
+        '200':
+          description: Vehicle resource
+          headers:
+            ETag: { schema: { type: string } }
+            Last-Modified: { schema: { type: string, format: http-date } }
+            Cache-Control: { schema: { type: string } }
+        '304': { description: Not modified when conditional headers match }
         '404': { description: Vehicle not found }
     patch:
       summary: Update a vehicle
@@ -395,6 +419,8 @@ paths:
   /api/v1/devices/{deviceId}/pings:
     post:
       summary: Submit one device location ping
+      security:
+        - deviceKey: []
       parameters:
         - in: path
           name: deviceId
@@ -417,6 +443,8 @@ paths:
   /api/v1/devices/{deviceId}/pings/batch:
     post:
       summary: Submit up to 100 device location pings
+      security:
+        - deviceKey: []
       parameters:
         - in: path
           name: deviceId
@@ -812,6 +840,10 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
+    deviceKey:
+      type: apiKey
+      in: header
+      name: X-Device-Key
   schemas:
     Login:
       type: object
