@@ -62,4 +62,17 @@ test('POST /api/tuks creates tuk when authed', async () => {
 
   const list = await request(app).get('/api/tuks');
   expect(list.body.length).toBe(1);
+
+  const paged = await request(app).get('/api/tuks?page=1&limit=1&search=T001&sort=-tukId');
+  expect(paged.statusCode).toBe(200);
+  expect(paged.body.pagination.total).toBe(1);
+  expect(paged.body.data[0].tukId).toBe('T001');
+
+  const stats = await request(app).get('/api/tuks/stats');
+  expect(stats.statusCode).toBe(200);
+  expect(stats.body.total).toBe(1);
+
+  const cached = await request(app).get('/api/tuks');
+  const notModified = await request(app).get('/api/tuks').set('If-None-Match', cached.headers.etag);
+  expect(notModified.statusCode).toBe(304);
 });

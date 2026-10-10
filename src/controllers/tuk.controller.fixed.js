@@ -6,10 +6,43 @@ export const getAllTuks = async (req, res) => {
     const filter = {};
     if (req.query.status) filter.status = req.query.status;
     if (req.query.route) filter.route = req.query.route;
-    const tuks = await Tuk.find(filter)
+    if (req.query.province) filter.province = req.query.province;
+    if (req.query.district) filter.district = req.query.district;
+    if (req.query.policeStation) filter.policeStation = req.query.policeStation;
+    if (req.query.search) {
+      filter.$or = [
+        { tukId: new RegExp(req.query.search, 'i') },
+        { registration: new RegExp(req.query.search, 'i') },
+        { driverName: new RegExp(req.query.search, 'i') }
+      ];
+    }
+    const sortFields = new Set(['tukId', 'registration', 'status', 'createdAt']);
+    const requestedSort = String(req.query.sort || 'tukId');
+    const sortField = requestedSort.replace(/^-/, '');
+    const sort = sortFields.has(sortField) ? requestedSort : 'tukId';
+    const query = Tuk.find(filter)
       .populate('route province district policeStation')
-      .sort({ tukId: 1 });
-    res.json(tuks);
+      .sort(sort);
+    if (!req.query.page && !req.query.limit) return res.json(await query);
+    const page = Math.max(Number.parseInt(req.query.page, 10) || 1, 1);
+    const limit = Math.min(Math.max(Number.parseInt(req.query.limit, 10) || 25, 1), 100);
+    const [tuks, total] = await Promise.all([
+      query.skip((page - 1) * limit).limit(limit),
+      Tuk.countDocuments(filter)
+    ]);
+    res.json({ data: tuks, pagination: { page, limit, total, pages: Math.ceil(total / limit) } });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const getTukStats = async (req, res) => {
+  try {
+    const [total, byStatus] = await Promise.all([
+      Tuk.countDocuments(),
+      Tuk.aggregate([{ $group: { _id: '$status', count: { $sum: 1 } } }, { $sort: { _id: 1 } }])
+    ]);
+    res.json({ total, byStatus: byStatus.map(({ _id, count }) => ({ status: _id, count })) });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

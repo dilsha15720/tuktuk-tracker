@@ -5,6 +5,7 @@ import { authMiddleware, requireRoles } from '../utils/auth.js';
 const router = express.Router();
 
 router.get('/', tukController.getAllTuks);
+router.get('/stats', tukController.getTukStats);
 router.get('/:id', tukController.getTukById);
 router.get('/:id/location', tukController.getTukLocation);
 router.get('/:id/history', tukController.getTukHistory);

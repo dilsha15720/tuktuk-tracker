@@ -69,6 +69,8 @@ ADMIN_PASS=admin123
 ## Useful endpoints
 
  `GET /api/tuks` -> list tuk-tuks; supports `?status=On%20Route` and `?route=<routeId>`
+ `GET /api/tuks?page=1&limit=25&sort=-createdAt&search=TUK` -> paginated, sorted, searchable listing
+ `GET /api/tuks/stats` -> operational totals grouped by status
  `GET /api/tuks/:id` -> get tuk-tuk details
  `PATCH /api/tuks/:id` -> protected (admin) - update a tuk-tuk
  `DELETE /api/tuks/:id` -> protected (admin) - delete a tuk-tuk

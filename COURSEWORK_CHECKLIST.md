@@ -3,6 +3,8 @@
 ## Implemented in the API
 
 - REST resources for routes, tuk-tuks, master data, current locations, and movement history.
+- Paginated, filtered, searchable, sortable Tuk listing with conditional GET support.
+- Operational Tuk statistics grouped by status.
 - JWT login with `admin` and `operator` roles.
 - Admin-only vehicle and route management.
 - Operator/admin location updates with persisted history pings.
@@ -39,7 +41,8 @@ Expected minimums:
 5. List tuk-tuks with status or route filters.
 6. Submit a location update and open the tuk history endpoint.
 7. Query history with `from`, `to`, and `limit` parameters.
-8. Demonstrate that an operator can update location but cannot delete a tuk.
+8. Demonstrate Tuk filtering, pagination, sorting, and `304 Not Modified` caching.
+9. Demonstrate that an operator can update location but cannot delete a tuk.
 
 ## User-owned submission tasks
 

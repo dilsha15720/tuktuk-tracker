@@ -108,6 +108,40 @@ paths:
           description: Filter by route ObjectId
           schema:
             type: string
+        - in: query
+          name: province
+          schema:
+            type: string
+        - in: query
+          name: district
+          schema:
+            type: string
+        - in: query
+          name: policeStation
+          schema:
+            type: string
+        - in: query
+          name: search
+          description: Search Tuk ID, registration, or driver name
+          schema:
+            type: string
+        - in: query
+          name: sort
+          description: Sort by tukId, registration, status, or createdAt; prefix with - for descending
+          schema:
+            type: string
+            example: -createdAt
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
       responses:
         '200':
           description: Array of tuk-tuks
@@ -139,6 +173,17 @@ paths:
                 $ref: '#/components/schemas/Tuk'
         '401':
           description: Unauthorized
+
+  /api/tuks/stats:
+    get:
+      summary: Get Tuk operational statistics
+      responses:
+        '200':
+          description: Total Tuk count grouped by status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TukStats'
 
   /api/tuks/{id}:
     get:
@@ -471,6 +516,21 @@ components:
           type: string
         name:
           type: string
+
+    TukStats:
+      type: object
+      properties:
+        total:
+          type: integer
+        byStatus:
+          type: array
+          items:
+            type: object
+            properties:
+              status:
+                type: string
+              count:
+                type: integer
 
     District:
       type: object
