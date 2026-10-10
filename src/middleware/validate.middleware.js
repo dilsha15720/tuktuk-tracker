@@ -79,3 +79,16 @@ export const paginationSchema = Joi.object({
   district: Joi.string().max(30),
   policeStation: Joi.string().max(30)
 });
+
+export const objectIdParamsSchema = Joi.object({
+  id: Joi.string().hex().length(24).required()
+});
+
+export const administrationQuerySchema = Joi.object({
+  page: Joi.number().integer().min(1),
+  limit: Joi.number().integer().min(1).max(100),
+  sort: Joi.string().valid('name', 'code', 'stationCode', 'createdAt'),
+  order: Joi.string().valid('asc', 'desc').default('asc'),
+  search: Joi.string().trim().max(100),
+  provinceId: Joi.string().hex().length(24)
+});

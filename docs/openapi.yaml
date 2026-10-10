@@ -20,6 +20,64 @@ paths:
                   status:
                     type: string
                     example: ok
+  /api/v1/provinces:
+    get:
+      summary: List provinces
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Search'
+        - $ref: '#/components/parameters/Sort'
+        - $ref: '#/components/parameters/Order'
+      responses:
+        '200':
+          description: Paginated provinces
+          headers:
+            Link:
+              description: Previous and next page links when available
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedProvinceResponse'
+  /api/v1/provinces/{id}/districts:
+    get:
+      summary: List districts within a province
+      parameters:
+        - $ref: '#/components/parameters/ResourceId'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Search'
+      responses:
+        '200':
+          description: Paginated districts
+  /api/v1/districts:
+    get:
+      summary: List districts
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Search'
+        - in: query
+          name: provinceId
+          schema:
+            type: string
+            pattern: '^[a-fA-F0-9]{24}$'
+      responses:
+        '200':
+          description: Paginated districts
+  /api/v1/districts/{id}/police-stations:
+    get:
+      summary: List police stations within a district
+      parameters:
+        - $ref: '#/components/parameters/ResourceId'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Search'
+      responses:
+        '200':
+          description: Paginated police stations
   /api/v1/auth/login:
     post:
       summary: Admin login
@@ -415,6 +473,38 @@ components:
       required: true
       schema:
         type: string
+    Page:
+      in: query
+      name: page
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    Limit:
+      in: query
+      name: limit
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 25
+    Search:
+      in: query
+      name: search
+      schema:
+        type: string
+    Sort:
+      in: query
+      name: sort
+      schema:
+        type: string
+    Order:
+      in: query
+      name: order
+      schema:
+        type: string
+        enum: [asc, desc]
+        default: asc
   securitySchemes:
     bearerAuth:
       type: http
@@ -506,6 +596,28 @@ components:
               type: string
             arrivalTime:
               type: string
+
+    PaginatedProvinceResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Province'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+        pages:
+          type: integer
 
     Province:
       type: object
