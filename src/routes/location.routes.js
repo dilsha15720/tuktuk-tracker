@@ -2,10 +2,11 @@ import express from 'express';
 import Tuk from '../models/tuk.model.fixed.js';
 import LocationPing from '../models/location-ping.model.js';
 import { authMiddleware, requireRoles } from '../utils/auth.js';
+import { validate, bulkLocationSchema } from '../middleware/validate.middleware.js';
 const router = express.Router();
 
 // Bulk update locations (expects [{ busId, latitude, longitude }])
-router.post('/bulk-update', authMiddleware, requireRoles('HQ_ADMIN', 'STATION_OFFICER', 'DEVICE'), async (req, res) => {
+router.post('/bulk-update', authMiddleware, requireRoles('HQ_ADMIN', 'STATION_OFFICER', 'DEVICE'), validate(bulkLocationSchema, 'body'), async (req, res) => {
   try {
     const updates = req.body;
     if (!Array.isArray(updates)) {

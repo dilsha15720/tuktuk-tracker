@@ -29,6 +29,45 @@ export const locationSchema = Joi.object({
   longitude: Joi.number().min(-180).max(180).required()
 });
 
+const tukFields = {
+  tukId: Joi.string().trim().max(30),
+  registration: Joi.string().trim().max(30),
+  deviceId: Joi.string().trim().max(100),
+  route: Joi.string().hex().length(24),
+  province: Joi.string().hex().length(24),
+  district: Joi.string().hex().length(24),
+  policeStation: Joi.string().hex().length(24),
+  driverName: Joi.string().trim().max(100),
+  status: Joi.string().valid('On Route', 'Stopped', 'Delayed'),
+  schedule: Joi.array().items(Joi.object({
+    tripDate: Joi.date(),
+    departureTime: Joi.string().max(20),
+    arrivalTime: Joi.string().max(20)
+  }))
+};
+
+export const createTukSchema = Joi.object(tukFields).fork(
+  ['tukId', 'registration', 'deviceId', 'province', 'district', 'policeStation'],
+  (field) => field.required()
+);
+export const updateTukSchema = Joi.object(tukFields).min(1);
+
+export const routeSchema = Joi.object({
+  routeCode: Joi.string().trim().max(20).required(),
+  name: Joi.string().trim().max(100).required(),
+  origin: Joi.string().trim().max(100).required(),
+  destination: Joi.string().trim().max(100).required(),
+  stops: Joi.array().items(Joi.string().trim().max(100)).default([]),
+  distanceKm: Joi.number().min(0)
+});
+
+export const bulkLocationSchema = Joi.array().items(Joi.object({
+  tukId: Joi.string().trim().max(30),
+  busId: Joi.string().trim().max(30),
+  latitude: Joi.number().min(-90).max(90).required(),
+  longitude: Joi.number().min(-180).max(180).required()
+}).or('tukId', 'busId')).min(1).max(500);
+
 export const paginationSchema = Joi.object({
   page: Joi.number().integer().min(1),
   limit: Joi.number().integer().min(1).max(100),
