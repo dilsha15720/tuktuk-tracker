@@ -1,8 +1,16 @@
 import express from 'express';
+import rateLimit from 'express-rate-limit';
 import { validate, loginSchema, refreshSchema } from '../middleware/validate.middleware.js';
 import { authenticateUser, issueTokens, refreshTokens } from '../services/auth.service.js';
 
 const router = express.Router();
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 10,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  message: { error: { code: 'LOGIN_RATE_LIMITED', message: 'Too many login attempts' } }
+});
 
 /**
  * Authenticate a user and issue access/refresh tokens.
@@ -31,7 +39,7 @@ async function refresh(req, res) {
   }
 }
 
-router.post('/login', validate(loginSchema, 'body'), login);
+router.post('/login', loginLimiter, validate(loginSchema, 'body'), login);
 router.post('/refresh', validate(refreshSchema, 'body'), refresh);
 
 export default router;

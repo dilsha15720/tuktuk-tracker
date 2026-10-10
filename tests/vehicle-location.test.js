@@ -5,6 +5,7 @@ import setup from './setup.js';
 import Vehicle from '../src/models/vehicle.model.js';
 import LocationPing from '../src/models/location-ping.model.js';
 import VehicleLastLocation from '../src/models/vehicle-last-location.model.js';
+import AuditLog from '../src/models/audit-log.model.js';
 
 let teardown;
 let token;
@@ -50,6 +51,10 @@ test('vehicle location endpoints return scoped last, history, live, and nearby d
   expect(history.statusCode).toBe(200);
   expect(history.body.data).toHaveLength(2);
   expect(new Date(history.body.data[0].recordedAt).getTime()).toBeLessThan(new Date(history.body.data[1].recordedAt).getTime());
+  const audit = await AuditLog.findOne({ action: 'HISTORY_ACCESS' }).lean();
+  expect(audit.actorUsername).toBe('admin');
+  expect(audit.metadata.endpoint).toContain(`/api/v1/vehicles/${vehicle._id}/locations`);
+  expect(audit.ipAddress).toBeDefined();
 
   const tooWide = await request(app).get(`/api/v1/vehicles/${vehicle._id}/locations?from=2020-01-01T00:00:00.000Z&to=2020-01-09T00:00:00.000Z`).set('Authorization', `Bearer ${token}`);
   expect(tooWide.statusCode).toBe(422);

@@ -1,7 +1,10 @@
 import express from 'express';
 import LocationPing from '../models/location-ping.model.js';
+import { authenticate } from '../utils/auth.js';
+import { auditHistoryAccess } from '../middleware/audit.middleware.js';
 
 const router = express.Router();
+router.use(authenticate, auditHistoryAccess);
 
 router.get('/', async (req, res) => {
   try {
