@@ -1,7 +1,13 @@
 import express from 'express';
 import rateLimit from 'express-rate-limit';
-import { validate, loginSchema, refreshSchema } from '../middleware/validate.middleware.js';
+import bcrypt from 'bcrypt';
+import User from '../models/user.model.js';
+import Province from '../models/province.model.js';
+import District from '../models/district.model.js';
+import PoliceStation from '../models/police-station.model.js';
+import { validate, loginSchema, refreshSchema, createUserSchema } from '../middleware/validate.middleware.js';
 import { authenticateUser, issueTokens, refreshTokens } from '../services/auth.service.js';
+import { authenticate, authorizeRoles } from '../utils/auth.js';
 import { asyncHandler } from '../utils/async-handler.js';
 
 const router = express.Router();
@@ -40,7 +46,27 @@ async function refresh(req, res) {
   }
 }
 
+async function createUser(req, res) {
+  const { username, password, role, provinceId, districtId, stationId } = req.body;
+
+  if (role === 'PROVINCIAL_OFFICER' && !await Province.exists({ _id: provinceId })) {
+    return res.status(422).json({ status: 422, code: 'INVALID_JURISDICTION', message: 'Province does not exist', details: null });
+  }
+  if (role === 'STATION_OFFICER') {
+    const districtExists = await District.exists({ _id: districtId });
+    const stationExists = await PoliceStation.exists({ _id: stationId, district: districtId });
+    if (!districtExists || !stationExists) {
+      return res.status(422).json({ status: 422, code: 'INVALID_JURISDICTION', message: 'District or station is invalid', details: null });
+    }
+  }
+
+  const passwordHash = await bcrypt.hash(password, 12);
+  const user = await User.create({ username, passwordHash, role, provinceId, districtId, stationId });
+  return res.status(201).json({ user: user.toJSON() });
+}
+
 router.post('/login', loginLimiter, validate(loginSchema, 'body'), asyncHandler(login));
 router.post('/refresh', validate(refreshSchema, 'body'), asyncHandler(refresh));
+router.post('/users', authenticate, authorizeRoles('HQ_ADMIN'), validate(createUserSchema, 'body', 422), asyncHandler(createUser));
 
 export default router;

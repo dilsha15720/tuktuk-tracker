@@ -29,6 +29,25 @@ export const refreshSchema = Joi.object({
   refreshToken: Joi.string().trim().required()
 });
 
+export const createUserSchema = Joi.object({
+  username: Joi.string().trim().lowercase().pattern(/^[a-z0-9._-]+$/).min(3).max(100).required(),
+  password: Joi.string().min(12).max(200).required(),
+  role: Joi.string().valid('HQ_ADMIN', 'PROVINCIAL_OFFICER', 'STATION_OFFICER').required(),
+  provinceId: Joi.string().hex().length(24),
+  districtId: Joi.string().hex().length(24),
+  stationId: Joi.string().hex().length(24)
+}).custom((value, helpers) => {
+  const hasScope = Boolean(value.provinceId || value.districtId || value.stationId);
+  if (value.role === 'HQ_ADMIN' && hasScope) return helpers.error('any.invalid');
+  if (value.role === 'PROVINCIAL_OFFICER' && (!value.provinceId || value.districtId || value.stationId)) {
+    return helpers.error('any.invalid');
+  }
+  if (value.role === 'STATION_OFFICER' && (!value.districtId || !value.stationId || value.provinceId)) {
+    return helpers.error('any.invalid');
+  }
+  return value;
+}).messages({ 'any.invalid': 'Jurisdiction fields do not match the selected role' });
+
 export const locationSchema = Joi.object({
   latitude: Joi.number().min(-90).max(90).required(),
   longitude: Joi.number().min(-180).max(180).required()

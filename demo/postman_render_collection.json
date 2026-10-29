@@ -1,0 +1,159 @@
+{
+  "info": {
+    "name": "Tuk Tracker API - Render",
+    "description": "Requests for the deployed Render API. Login saves JWT tokens automatically. Run write requests manually: they create test resources; the collection uses saved IDs for follow-up updates/deletes. POST /api/v1/auth/users is not deployed and returns 404. Device keys are secrets; rotate after sharing this collection.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      { "key": "token", "value": "{{jwt_token}}", "type": "string" }
+    ]
+  },
+  "variable": [
+    { "key": "base_url", "value": "https://tuktuk-tracker-api-hgq6.onrender.com", "type": "string" },
+    { "key": "username", "value": "hq.admin", "type": "string" },
+    { "key": "password", "value": "CourseworkAdmin123!", "type": "string" },
+    { "key": "jwt_token", "value": "", "type": "string" },
+    { "key": "refresh_token", "value": "", "type": "string" },
+    { "key": "province_id", "value": "6ac9c1b35822709748cd3bdb", "type": "string" },
+    { "key": "district_id", "value": "6ac9c1b35822709748cd3bdd", "type": "string" },
+    { "key": "station_id", "value": "6ac9c1b55822709748cd3bf7", "type": "string" },
+    { "key": "vehicle_id", "value": "6ae38c06a8e739e088c29b88", "type": "string" },
+    { "key": "device_vehicle_id", "value": "6ae38c06a8e739e088c29b88", "type": "string" },
+    { "key": "driver_id", "value": "6ae38c06a8e739e088c29b87", "type": "string" },
+    { "key": "route_id", "value": "6ac9c1b65822709748cd3c00", "type": "string" },
+    { "key": "tuk_id", "value": "6ac9c1b75822709748cd3c05", "type": "string" },
+    { "key": "device_id", "value": "6ae39434fb985bae20b14156", "type": "string" },
+    { "key": "device_key", "value": "", "type": "string" },
+    { "key": "test_suffix", "value": "", "type": "string" },
+    { "key": "ping_time_1", "value": "", "type": "string" },
+    { "key": "ping_time_2", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "01 - Health and Authentication",
+      "item": [
+        {
+          "name": "Health",
+          "request": { "method": "GET", "auth": { "type": "noauth" }, "url": "{{base_url}}/health" }
+        },
+        {
+          "name": "Login (saves access and refresh tokens)",
+          "request": {
+            "method": "POST",
+            "auth": { "type": "noauth" },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"{{password}}\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{base_url}}/api/v1/auth/login"
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Login succeeds', function () { pm.response.to.have.status(200); });", "const data = pm.response.json();", "if (data.accessToken) pm.collectionVariables.set('jwt_token', data.accessToken);", "if (data.refreshToken) pm.collectionVariables.set('refresh_token', data.refreshToken);"] } }]
+        },
+        {
+          "name": "Refresh token pair",
+          "request": {
+            "method": "POST",
+            "auth": { "type": "noauth" },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"refreshToken\": \"{{refresh_token}}\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{base_url}}/api/v1/auth/refresh"
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Refresh succeeds', function () { pm.response.to.have.status(200); });", "const data = pm.response.json();", "if (data.accessToken) pm.collectionVariables.set('jwt_token', data.accessToken);", "if (data.refreshToken) pm.collectionVariables.set('refresh_token', data.refreshToken);"] } }]
+        }
+      ]
+    },
+    {
+      "name": "02 - Public Reads",
+      "item": [
+        { "name": "List provinces", "request": { "method": "GET", "auth": { "type": "noauth" }, "url": "{{base_url}}/api/v1/provinces?page=1&limit=25" } },
+        { "name": "List districts", "request": { "method": "GET", "auth": { "type": "noauth" }, "url": "{{base_url}}/api/v1/districts?page=1&limit=25" } },
+        { "name": "Districts in province", "request": { "method": "GET", "auth": { "type": "noauth" }, "url": "{{base_url}}/api/v1/provinces/{{province_id}}/districts?page=1&limit=25" } },
+        { "name": "Police stations in district", "request": { "method": "GET", "auth": { "type": "noauth" }, "url": "{{base_url}}/api/v1/districts/{{district_id}}/police-stations?page=1&limit=25" } },
+        { "name": "Master data - provinces", "request": { "method": "GET", "auth": { "type": "noauth" }, "url": "{{base_url}}/api/v1/master-data/provinces" } },
+        { "name": "Master data - districts", "request": { "method": "GET", "auth": { "type": "noauth" }, "url": "{{base_url}}/api/v1/master-data/districts" } },
+        { "name": "Master data - stations", "request": { "method": "GET", "auth": { "type": "noauth" }, "url": "{{base_url}}/api/v1/master-data/stations" } },
+        { "name": "List routes", "request": { "method": "GET", "auth": { "type": "noauth" }, "url": "{{base_url}}/api/v1/routes" } },
+        { "name": "Get route by ID", "request": { "method": "GET", "auth": { "type": "noauth" }, "url": "{{base_url}}/api/v1/routes/{{route_id}}" } },
+        { "name": "List tuks", "request": { "method": "GET", "auth": { "type": "noauth" }, "url": "{{base_url}}/api/v1/tuks?page=1&limit=25" } },
+        { "name": "Tuk statistics", "request": { "method": "GET", "auth": { "type": "noauth" }, "url": "{{base_url}}/api/v1/tuks/stats" } },
+        { "name": "Get tuk by ID", "request": { "method": "GET", "auth": { "type": "noauth" }, "url": "{{base_url}}/api/v1/tuks/{{tuk_id}}" } },
+        { "name": "Get tuk location", "request": { "method": "GET", "auth": { "type": "noauth" }, "url": "{{base_url}}/api/v1/tuks/{{tuk_id}}/location" } },
+        { "name": "Get tuk history", "request": { "method": "GET", "auth": { "type": "noauth" }, "url": "{{base_url}}/api/v1/tuks/{{tuk_id}}/history?limit=10" } }
+      ]
+    },
+    {
+      "name": "03 - Bearer Protected Reads",
+      "item": [
+        { "name": "List vehicles", "request": { "method": "GET", "url": "{{base_url}}/api/v1/vehicles?page=1&limit=25" } },
+        { "name": "Get vehicle", "request": { "method": "GET", "url": "{{base_url}}/api/v1/vehicles/{{vehicle_id}}" } },
+        { "name": "Get vehicle location", "request": { "method": "GET", "url": "{{base_url}}/api/v1/vehicles/{{vehicle_id}}/location" } },
+        { "name": "Get vehicle location history", "request": { "method": "GET", "url": "{{base_url}}/api/v1/vehicles/{{vehicle_id}}/locations?from=2026-10-29T00%3A00%3A00.000Z&to=2026-10-30T00%3A00%3A00.000Z&page=1&limit=25" } },
+        { "name": "Live vehicle locations", "request": { "method": "GET", "url": "{{base_url}}/api/v1/vehicles/locations/live?page=1&limit=25" } },
+        { "name": "Nearby vehicle locations", "request": { "method": "GET", "url": "{{base_url}}/api/v1/vehicles/locations/nearby?lat=6.9271&lng=79.8612&radius=5&page=1&limit=25" } },
+        { "name": "List drivers", "request": { "method": "GET", "url": "{{base_url}}/api/v1/drivers?page=1&limit=25" } },
+        { "name": "Get driver", "request": { "method": "GET", "url": "{{base_url}}/api/v1/drivers/{{driver_id}}" } },
+        { "name": "Query movement history", "request": { "method": "GET", "url": "{{base_url}}/api/v1/history?limit=10" } }
+      ]
+    },
+    {
+      "name": "04 - Create Test Resources (Bearer)",
+      "description": "Run in order if you want to test writes. Each create request saves its new ID for the subsequent read/update/delete requests. These requests change production data.",
+      "item": [
+        {
+          "name": "Create vehicle (test record)",
+          "event": [{ "listen": "prerequest", "script": { "type": "text/javascript", "exec": ["pm.collectionVariables.set('test_suffix', Date.now().toString());"] } }, { "listen": "test", "script": { "type": "text/javascript", "exec": ["const data = pm.response.json();", "if (data._id) pm.collectionVariables.set('vehicle_id', data._id);"] } }],
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"plateNumber\": \"PM-VEH-{{test_suffix}}\",\n  \"provinceId\": \"{{province_id}}\",\n  \"districtId\": \"{{district_id}}\",\n  \"stationId\": \"{{station_id}}\",\n  \"status\": \"ACTIVE\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{base_url}}/api/v1/vehicles" }
+        },
+        { "name": "Update test vehicle", "request": { "method": "PATCH", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"status\": \"SUSPENDED\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{base_url}}/api/v1/vehicles/{{vehicle_id}}" } },
+        { "name": "Delete test vehicle (run only after create)", "request": { "method": "DELETE", "url": "{{base_url}}/api/v1/vehicles/{{vehicle_id}}" } },
+        {
+          "name": "Create test driver",
+          "event": [{ "listen": "prerequest", "script": { "type": "text/javascript", "exec": ["pm.collectionVariables.set('test_suffix', Date.now().toString());"] } }, { "listen": "test", "script": { "type": "text/javascript", "exec": ["const data = pm.response.json();", "if (data._id) pm.collectionVariables.set('driver_id', data._id);"] } }],
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"fullName\": \"Postman Test Driver\",\n  \"licenceNumber\": \"PM-LIC-{{test_suffix}}\",\n  \"provinceId\": \"{{province_id}}\",\n  \"districtId\": \"{{district_id}}\",\n  \"stationId\": \"{{station_id}}\",\n  \"isActive\": true\n}", "options": { "raw": { "language": "json" } } }, "url": "{{base_url}}/api/v1/drivers" }
+        },
+        { "name": "Update test driver", "request": { "method": "PATCH", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"fullName\": \"Postman Test Driver Updated\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{base_url}}/api/v1/drivers/{{driver_id}}" } },
+        { "name": "Delete test driver (run only after create)", "request": { "method": "DELETE", "url": "{{base_url}}/api/v1/drivers/{{driver_id}}" } },
+        {
+          "name": "Create route (test record)",
+          "event": [{ "listen": "prerequest", "script": { "type": "text/javascript", "exec": ["pm.collectionVariables.set('test_suffix', Date.now().toString());"] } }, { "listen": "test", "script": { "type": "text/javascript", "exec": ["const data = pm.response.json();", "if (data._id) pm.collectionVariables.set('route_id', data._id);"] } }],
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"routeCode\": \"PM-{{test_suffix}}\",\n  \"name\": \"Postman Test Route\",\n  \"origin\": \"Ampara\",\n  \"destination\": \"Colombo\",\n  \"stops\": [\"Test stop\"],\n  \"distanceKm\": 10\n}", "options": { "raw": { "language": "json" } } }, "url": "{{base_url}}/api/v1/routes" }
+        },
+        { "name": "Create test tuk", "event": [{ "listen": "prerequest", "script": { "type": "text/javascript", "exec": ["pm.collectionVariables.set('test_suffix', Date.now().toString());"] } }, { "listen": "test", "script": { "type": "text/javascript", "exec": ["const data = pm.response.json();", "if (data._id) pm.collectionVariables.set('tuk_id', data._id);"] } }], "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"tukId\": \"PM-TUK-{{test_suffix}}\",\n  \"registration\": \"PM-REG-{{test_suffix}}\",\n  \"deviceId\": \"{{device_id}}\",\n  \"province\": \"{{province_id}}\",\n  \"district\": \"{{district_id}}\",\n  \"policeStation\": \"{{station_id}}\",\n  \"route\": \"{{route_id}}\",\n  \"driverName\": \"Postman Test Driver\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{base_url}}/api/v1/tuks" } },
+        { "name": "Get created test route", "request": { "method": "GET", "auth": { "type": "noauth" }, "url": "{{base_url}}/api/v1/routes/{{route_id}}" } },
+        { "name": "Get created test tuk", "request": { "method": "GET", "auth": { "type": "noauth" }, "url": "{{base_url}}/api/v1/tuks/{{tuk_id}}" } },
+        { "name": "Update test tuk", "request": { "method": "PATCH", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"status\": \"Stopped\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{base_url}}/api/v1/tuks/{{tuk_id}}" } },
+        { "name": "Update test tuk location", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"latitude\": 7.2975,\n  \"longitude\": 81.6820\n}", "options": { "raw": { "language": "json" } } }, "url": "{{base_url}}/api/v1/tuks/{{tuk_id}}/location" } },
+        { "name": "Bulk update test tuk location", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "[\n  {\n    \"tukId\": \"PM-TUK-{{test_suffix}}\",\n    \"latitude\": 7.2975,\n    \"longitude\": 81.6820\n  }\n]", "options": { "raw": { "language": "json" } } }, "url": "{{base_url}}/api/v1/locations/bulk-update" } },
+        { "name": "Delete test tuk (run only after create)", "request": { "method": "DELETE", "url": "{{base_url}}/api/v1/tuks/{{tuk_id}}" } }
+      ]
+    },
+    {
+      "name": "05 - Device Keys and Pings",
+      "description": "Register/rotate/revoke are HQ_ADMIN-only. A new plainKey is returned only once. Ping requests use X-Device-Key, not a JWT. Ping requests write production telemetry.",
+      "item": [
+        { "name": "List registered devices (HQ admin)", "request": { "method": "GET", "url": "{{base_url}}/api/v1/devices" } },
+        {
+          "name": "Register new device for test vehicle (HQ admin)",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["const data = pm.response.json();", "if (data.device?._id) pm.collectionVariables.set('device_id', data.device._id);", "if (data.plainKey) pm.collectionVariables.set('device_key', data.plainKey);"] } }],
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"vehicleId\": \"{{device_vehicle_id}}\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{base_url}}/api/v1/devices" }
+        },
+        {
+          "name": "Rotate test device key (HQ admin)",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["const data = pm.response.json();", "if (data.plainKey) pm.collectionVariables.set('device_key', data.plainKey);"] } }],
+          "request": { "method": "PATCH", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"action\": \"rotate\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{base_url}}/api/v1/devices/{{device_id}}" }
+        },
+        {
+          "name": "Submit one ping (device key)",
+          "event": [{ "listen": "prerequest", "script": { "type": "text/javascript", "exec": ["pm.collectionVariables.set('ping_time_1', new Date().toISOString());"] } }],
+          "request": { "method": "POST", "auth": { "type": "noauth" }, "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "X-Device-Key", "value": "{{device_key}}" }], "body": { "mode": "raw", "raw": "{\n  \"latitude\": 7.2975,\n  \"longitude\": 81.6820,\n  \"speed\": 20,\n  \"heading\": 90,\n  \"recordedAt\": \"{{ping_time_1}}\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{base_url}}/api/v1/devices/{{device_id}}/pings" }
+        },
+        {
+          "name": "Submit ping batch (device key)",
+          "event": [{ "listen": "prerequest", "script": { "type": "text/javascript", "exec": ["pm.collectionVariables.set('ping_time_1', new Date().toISOString());", "pm.collectionVariables.set('ping_time_2', new Date(Date.now() + 1000).toISOString());"] } }],
+          "request": { "method": "POST", "auth": { "type": "noauth" }, "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "X-Device-Key", "value": "{{device_key}}" }], "body": { "mode": "raw", "raw": "[\n  {\n    \"latitude\": 7.2975,\n    \"longitude\": 81.6820,\n    \"speed\": 20,\n    \"heading\": 90,\n    \"recordedAt\": \"{{ping_time_1}}\"\n  },\n  {\n    \"latitude\": 7.2980,\n    \"longitude\": 81.6825,\n    \"speed\": 22,\n    \"heading\": 95,\n    \"recordedAt\": \"{{ping_time_2}}\"\n  }\n]", "options": { "raw": { "language": "json" } } }, "url": "{{base_url}}/api/v1/devices/{{device_id}}/pings/batch" }
+        },
+        { "name": "Revoke test device (HQ admin; run last)", "request": { "method": "PATCH", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"action\": \"revoke\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{base_url}}/api/v1/devices/{{device_id}}" } }
+      ]
+    }
+  ]
+}

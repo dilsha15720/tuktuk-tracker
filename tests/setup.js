@@ -16,6 +16,7 @@ export default async function setup() {
   mongo = await MongoMemoryServer.create();
   const uri = mongo.getUri();
   await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+  await Promise.all(Object.values(mongoose.models).map((model) => model.init()));
   return async function teardown() {
     await mongoose.disconnect();
     await mongo.stop();
