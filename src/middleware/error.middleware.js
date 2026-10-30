@@ -60,5 +60,17 @@ export function errorHandler(error, req, res, next) {
       details = null;
     }
   }
+  if (status >= 500) {
+    const logMessage = String(error.message || 'Unknown error')
+      .replace(/(mongodb(?:\+srv)?:\/\/)[^@\s]+@/gi, '$1[REDACTED]@')
+      .slice(0, 500);
+    console.error('Unhandled API error', {
+      method: req.method,
+      path: req.path,
+      name: error.name,
+      code: error.code,
+      message: logMessage
+    });
+  }
   res.status(status).json({ status, code, message, details });
 }

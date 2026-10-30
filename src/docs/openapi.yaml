@@ -134,6 +134,8 @@ paths:
                     type: string
         '401':
           description: Invalid credentials
+        '500':
+          description: Unexpected server error; check Render logs for the matching request time
   /api/v1/auth/users:
     post:
       summary: Create a user account
